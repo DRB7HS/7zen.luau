@@ -1,0 +1,155 @@
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ByBokaArabicUI"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("ImageLabel")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.Size = UDim2.new(0, 0, 0, 0)
+MainFrame.Image = "rbxassetid://136450335437647"
+MainFrame.ScaleType = Enum.ScaleType.Crop
+MainFrame.ClipsDescendants = true
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 10)
+MainCorner.Parent = MainFrame
+
+local function CreateAnimatedStroke(Object)
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Parent = Object
+    Stroke.Color = Color3.fromRGB(0, 0, 0)
+    Stroke.Thickness = 3
+    Stroke.Transparency = 0
+    Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    Stroke.LineJoinMode = Enum.LineJoinMode.Round
+
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Parent = Stroke
+    Gradient.Rotation = 0
+
+    Gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.15, Color3.fromRGB(10, 10, 10)),
+        ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.65, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.85, Color3.fromRGB(10, 10, 10)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    }
+
+    local AnimationInfo = TweenInfo.new(
+        7,
+        Enum.EasingStyle.Linear,
+        Enum.EasingDirection.InOut,
+        -1
+    )
+
+    local Track = TweenService:Create(
+        Gradient,
+        AnimationInfo,
+        {Rotation = 360}
+    )
+
+    Track:Play()
+end
+
+CreateAnimatedStroke(MainFrame)
+
+local function ApplyTextStroke(TextObject)
+    local TextStroke = Instance.new("UIStroke")
+    TextStroke.Parent = TextObject
+    TextStroke.Color = Color3.fromRGB(255, 255, 255)
+    TextStroke.Thickness = 2
+    TextStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+
+    local TextGradient = Instance.new("UIGradient")
+    TextGradient.Parent = TextStroke
+    TextGradient.Rotation = 180
+
+   Gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+    ColorSequenceKeypoint.new(0.15, Color3.fromRGB(15, 15, 15)),
+    ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(0.65, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(0.85, Color3.fromRGB(15, 15, 15)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+}
+
+    TextGradient.Offset = Vector2.new(-1, 0)
+
+    local Tween = TweenService:Create(TextGradient, TweenInfo.new(2.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1), {
+        Offset = Vector2.new(1, 0)
+    })
+    Tween:Play()
+end
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Position = UDim2.new(0, 15, 0, 10)
+TitleLabel.Size = UDim2.new(0, 200, 0, 30)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Text = "7z | ALSAFI"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 22
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+ApplyTextStroke(TitleLabel)
+
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Name = "ToggleBtn"
+ToggleBtn.Parent = MainFrame
+ToggleBtn.Position = UDim2.new(1, -40, 0, 10)
+ToggleBtn.Size = UDim2.new(0, 30, 0, 30)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ToggleBtn.BackgroundTransparency = 0.3
+ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.Text = "-"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 22
+ToggleBtn.AutoButtonColor = true
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(0, 6)
+ToggleCorner.Parent = ToggleBtn
+
+ApplyTextStroke(ToggleBtn)
+
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Parent = MainFrame
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Position = UDim2.new(0, 0, 0, 50)
+ContentFrame.Size = UDim2.new(1, 0, 1, -50)
+ContentFrame.ClipsDescendants = true
+
+local TargetSize = UDim2.new(0, 520, 0, 340)
+local MinimizedSize = UDim2.new(0, 520, 0, 50)
+
+MainFrame:TweenSize(TargetSize, Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.7, true)
+
+local IsMinimized = false
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    IsMinimized = not IsMinimized
+    if IsMinimized then
+        ToggleBtn.Text = "+"
+        ContentFrame.Visible = false
+        MainFrame:TweenSize(MinimizedSize, Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.4, true)
+    else
+        ToggleBtn.Text = "-"
+        MainFrame:TweenSize(TargetSize, Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.4, true, function()
+            ContentFrame.Visible = true
+        end)
+    end
+end)
