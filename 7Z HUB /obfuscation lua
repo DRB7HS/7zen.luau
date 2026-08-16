@@ -448,7 +448,7 @@ PlayerButtonLabel2.Name = "PlayerButtonLabel2"
 PlayerButtonLabel2.Size = UDim2.new(1, -60, 1, 0)
 PlayerButtonLabel2.Position = UDim2.new(0, 12, 0, 0)
 PlayerButtonLabel2.BackgroundTransparency = 1
-PlayerButtonLabel2.Text = "Invisible Player"
+PlayerButtonLabel2.Text = "Invisible Player | SOON !"
 PlayerButtonLabel2.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlayerButtonLabel2.TextSize = 14
 PlayerButtonLabel2.Font = Enum.Font.FredokaOne
@@ -482,6 +482,59 @@ PlayerSwitchCircle2.Parent = PlayerSwitchBackground2
 local PlayerCircleCorner2 = Instance.new("UICorner")
 PlayerCircleCorner2.CornerRadius = UDim.new(1, 0)
 PlayerCircleCorner2.Parent = PlayerSwitchCircle2
+
+local PlayerButtonFrame3 = Instance.new("Frame")
+PlayerButtonFrame3.Name = "PlayerButtonFrame3"
+PlayerButtonFrame3.Size = UDim2.new(1, 0, 0, 40)
+PlayerButtonFrame3.Position = UDim2.new(0, 0, 0, 96)
+PlayerButtonFrame3.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+PlayerButtonFrame3.BackgroundTransparency = 0.4
+PlayerButtonFrame3.BorderSizePixel = 0
+PlayerButtonFrame3.Parent = PlayerMenuList
+
+local PlayerButtonCorner3 = Instance.new("UICorner")
+PlayerButtonCorner3.CornerRadius = UDim.new(0, 16)
+PlayerButtonCorner3.Parent = PlayerButtonFrame3
+
+local PlayerButtonLabel3 = Instance.new("TextLabel")
+PlayerButtonLabel3.Name = "PlayerButtonLabel3"
+PlayerButtonLabel3.Size = UDim2.new(1, -60, 1, 0)
+PlayerButtonLabel3.Position = UDim2.new(0, 12, 0, 0)
+PlayerButtonLabel3.BackgroundTransparency = 1
+PlayerButtonLabel3.Text = "Unwalk"
+PlayerButtonLabel3.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlayerButtonLabel3.TextSize = 14
+PlayerButtonLabel3.Font = Enum.Font.FredokaOne
+PlayerButtonLabel3.TextXAlignment = Enum.TextXAlignment.Left
+PlayerButtonLabel3.Parent = PlayerButtonFrame3
+
+CreateTextGlowStroke(PlayerButtonLabel3)
+
+local PlayerSwitchBackground3 = Instance.new("TextButton")
+PlayerSwitchBackground3.Name = "PlayerSwitchBackground3"
+PlayerSwitchBackground3.Size = UDim2.new(0, 36, 0, 20)
+PlayerSwitchBackground3.Position = UDim2.new(1, -48, 0.5, -10)
+PlayerSwitchBackground3.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+PlayerSwitchBackground3.BorderSizePixel = 0
+PlayerSwitchBackground3.Text = ""
+PlayerSwitchBackground3.AutoButtonColor = false
+PlayerSwitchBackground3.Parent = PlayerButtonFrame3
+
+local PlayerSwitchCorner3 = Instance.new("UICorner")
+PlayerSwitchCorner3.CornerRadius = UDim.new(0, 16)
+PlayerSwitchCorner3.Parent = PlayerSwitchBackground3
+
+local PlayerSwitchCircle3 = Instance.new("Frame")
+PlayerSwitchCircle3.Name = "PlayerSwitchCircle3"
+PlayerSwitchCircle3.Size = UDim2.new(0, 16, 0, 16)
+PlayerSwitchCircle3.Position = UDim2.new(0, 2, 0.5, -8)
+PlayerSwitchCircle3.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+PlayerSwitchCircle3.BorderSizePixel = 0
+PlayerSwitchCircle3.Parent = PlayerSwitchBackground3
+
+local PlayerCircleCorner3 = Instance.new("UICorner")
+PlayerCircleCorner3.CornerRadius = UDim.new(1, 0)
+PlayerCircleCorner3.Parent = PlayerSwitchCircle3
 
 AntiMenuButton.MouseButton1Click:Connect(function()
     AntiMenuList.Visible = true
@@ -817,6 +870,76 @@ local function ToggleInvisiblePlayer()
 end
 
 PlayerSwitchBackground2.MouseButton1Click:Connect(ToggleInvisiblePlayer)
+
+local unWalkEnabled = false
+local unWalkConnections = {}
+
+local function stopAnimations(humanoid)
+    if not unWalkEnabled then return end
+    for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+        track:Stop(0)
+    end
+end
+
+local function monitorCharacter(character)
+    if not character then return end
+    local humanoid = character:WaitForChild("Humanoid")
+
+    stopAnimations(humanoid)
+
+    local animConn = humanoid.AnimationPlayed:Connect(function(track)
+        if unWalkEnabled then
+            track:Stop(0)
+        end
+    end)
+    table.insert(unWalkConnections, animConn)
+
+    local stateConn = humanoid.StateChanged:Connect(function(_, newState)
+        if not unWalkEnabled then return end
+        if newState == Enum.HumanoidStateType.GettingUp
+        or newState == Enum.HumanoidStateType.Running
+        or newState == Enum.HumanoidStateType.RunningNoPhysics
+        or newState == Enum.HumanoidStateType.Landed then
+            task.defer(function()
+                stopAnimations(humanoid)
+            end)
+        end
+    end)
+    table.insert(unWalkConnections, stateConn)
+end
+
+local unWalkCharAddedConn = nil
+
+local function ToggleUnwalk()
+    unWalkEnabled = not unWalkEnabled
+    
+    local targetBgColor = unWalkEnabled and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 0, 0)
+    local targetCircleColor = unWalkEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
+    local targetCirclePos = unWalkEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+    
+    TweenService:Create(PlayerSwitchBackground3, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
+    TweenService:Create(PlayerSwitchCircle3, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    
+    if unWalkEnabled then
+        if LocalPlayer.Character then
+            monitorCharacter(LocalPlayer.Character)
+        end
+        unWalkCharAddedConn = LocalPlayer.CharacterAdded:Connect(function(character)
+            monitorCharacter(character)
+        end)
+    else
+        if unWalkCharAddedConn then
+            unWalkCharAddedConn:Disconnect()
+            unWalkCharAddedConn = nil
+        end
+        for _, conn in ipairs(unWalkConnections) do
+            conn:Disconnect()
+        end
+        unWalkConnections = {}
+    end
+end
+
+PlayerSwitchBackground3.MouseButton1Click:Connect(ToggleUnwalk)
 
 local TargetWidth = 380
 local TargetHeight = 320
