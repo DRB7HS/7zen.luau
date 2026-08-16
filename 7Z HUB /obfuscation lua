@@ -356,7 +356,7 @@ local function CheckText(str)
     if not antiKickEnabled or not str then return end
     local lowerStr = str:lower()
     if lowerStr:find("you stole") or lowerStr:find("your stole") then
-        LocalPlayer:Kick("7zen Script\n" .. str)
+        LocalPlayer:Kick("7zen Script\n" .. str ✅)
     end
 end
 
