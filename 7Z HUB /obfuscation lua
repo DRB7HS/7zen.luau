@@ -31,9 +31,9 @@ MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 16)
-UICorner.Parent = MainFrame
+local MainFrameCorner = Instance.new("UICorner")
+MainFrameCorner.CornerRadius = UDim.new(0, 10)
+MainFrameCorner.Parent = MainFrame
 
 local BackgroundImage = Instance.new("ImageLabel")
 BackgroundImage.Name = "BackgroundImage"
@@ -41,12 +41,9 @@ BackgroundImage.Size = UDim2.new(1, 0, 1, 0)
 BackgroundImage.Position = UDim2.new(0, 0, 0, 0)
 BackgroundImage.BackgroundTransparency = 1
 BackgroundImage.Image = "rbxassetid://136450335437647"
+BackgroundImage.ImageTransparency = 0
 BackgroundImage.ScaleType = Enum.ScaleType.Crop
 BackgroundImage.Parent = MainFrame
-
-local ImageCorner = Instance.new("UICorner")
-ImageCorner.CornerRadius = UDim.new(0, 16)
-ImageCorner.Parent = BackgroundImage
 
 local function CreateMainBorderStroke(Object)
     local Stroke = Instance.new("UIStroke")
@@ -77,6 +74,39 @@ local function CreateMainBorderStroke(Object)
 end
 
 CreateMainBorderStroke(MainFrame)
+
+local BigButton = Instance.new("TextButton")
+BigButton.Name = "BigAutoBatButton"
+BigButton.Size = UDim2.new(0, 90, 0, 90)
+BigButton.Position = UDim2.new(0.92, 0, 0.3, 0)
+BigButton.AnchorPoint = Vector2.new(0.5, 0.5)
+BigButton.BackgroundTransparency = 1
+BigButton.Text = "Auto\nBat"
+BigButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+BigButton.TextSize = 16
+BigButton.Font = Enum.Font.FredokaOne
+BigButton.AutoButtonColor = false
+BigButton.Parent = ScreenGui
+
+local BigButtonCorner = Instance.new("UICorner")
+BigButtonCorner.CornerRadius = UDim.new(0, 10)
+BigButtonCorner.Parent = BigButton
+
+local BigButtonImage = Instance.new("ImageLabel")
+BigButtonImage.Name = "BigButtonImage"
+BigButtonImage.Size = UDim2.new(1, 0, 1, 0)
+BigButtonImage.Position = UDim2.new(0, 0, 0, 0)
+BigButtonImage.BackgroundTransparency = 1
+BigButtonImage.Image = "rbxassetid://136450335437647"
+BigButtonImage.ImageTransparency = 0
+BigButtonImage.ScaleType = Enum.ScaleType.Crop
+BigButtonImage.Parent = BigButton
+
+local BigButtonImageCorner = Instance.new("UICorner")
+BigButtonImageCorner.CornerRadius = UDim.new(0, 10)
+BigButtonImageCorner.Parent = BigButtonImage
+
+CreateMainBorderStroke(BigButton)
 
 local function CreateTextGlowStroke(Object)
     local Stroke = Instance.new("UIStroke")
@@ -124,6 +154,7 @@ ToggleButton.Size = UDim2.new(0, 26, 0, 26)
 ToggleButton.Position = UDim2.new(1, -38, 0, 10)
 ToggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 ToggleButton.BackgroundTransparency = 0.3
+ToggleButton.BorderSizePixel = 0
 ToggleButton.Text = "-"
 ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleButton.TextSize = 18
@@ -131,10 +162,11 @@ ToggleButton.Font = Enum.Font.FredokaOne
 ToggleButton.AutoButtonColor = true
 ToggleButton.Parent = MainFrame
 
-local BtnCorner = Instance.new("UICorner")
-BtnCorner.CornerRadius = UDim.new(0, 6)
-BtnCorner.Parent = ToggleButton
+local ToggleButtonCorner = Instance.new("UICorner")
+ToggleButtonCorner.CornerRadius = UDim.new(0, 6)
+ToggleButtonCorner.Parent = ToggleButton
 
+CreateMainBorderStroke(ToggleButton)
 CreateTextGlowStroke(ToggleButton)
 
 local ContentContainer = Instance.new("Frame")
@@ -149,12 +181,18 @@ AntiMenuButton.Name = "AntiMenuButton"
 AntiMenuButton.Size = UDim2.new(0, 45, 0, 20)
 AntiMenuButton.Position = UDim2.new(0, 15, 0, 0)
 AntiMenuButton.BackgroundTransparency = 1
+AntiMenuButton.BorderSizePixel = 0
 AntiMenuButton.Text = "Anti"
 AntiMenuButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 AntiMenuButton.TextSize = 14
 AntiMenuButton.Font = Enum.Font.FredokaOne
 AntiMenuButton.Parent = ContentContainer
 
+local AntiMenuButtonCorner = Instance.new("UICorner")
+AntiMenuButtonCorner.CornerRadius = UDim.new(0, 6)
+AntiMenuButtonCorner.Parent = AntiMenuButton
+
+CreateMainBorderStroke(AntiMenuButton)
 CreateTextGlowStroke(AntiMenuButton)
 
 local TopLine1 = Instance.new("Frame")
@@ -178,12 +216,18 @@ PlayerMenuButton.Name = "PlayerMenuButton"
 PlayerMenuButton.Size = UDim2.new(0, 55, 0, 20)
 PlayerMenuButton.Position = UDim2.new(0, 70, 0, 0)
 PlayerMenuButton.BackgroundTransparency = 1
+PlayerMenuButton.BorderSizePixel = 0
 PlayerMenuButton.Text = "Player"
 PlayerMenuButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlayerMenuButton.TextSize = 14
 PlayerMenuButton.Font = Enum.Font.FredokaOne
 PlayerMenuButton.Parent = ContentContainer
 
+local PlayerMenuButtonCorner = Instance.new("UICorner")
+PlayerMenuButtonCorner.CornerRadius = UDim.new(0, 6)
+PlayerMenuButtonCorner.Parent = PlayerMenuButton
+
+CreateMainBorderStroke(PlayerMenuButton)
 CreateTextGlowStroke(PlayerMenuButton)
 
 local TopLine2 = Instance.new("Frame")
@@ -227,9 +271,11 @@ ButtonFrame1.BackgroundTransparency = 0.4
 ButtonFrame1.BorderSizePixel = 0
 ButtonFrame1.Parent = AntiMenuList
 
-local ButtonCorner1 = Instance.new("UICorner")
-ButtonCorner1.CornerRadius = UDim.new(0, 16)
-ButtonCorner1.Parent = ButtonFrame1
+local ButtonFrame1Corner = Instance.new("UICorner")
+ButtonFrame1Corner.CornerRadius = UDim.new(0, 8)
+ButtonFrame1Corner.Parent = ButtonFrame1
+
+CreateMainBorderStroke(ButtonFrame1)
 
 local ButtonLabel1 = Instance.new("TextLabel")
 ButtonLabel1.Name = "ButtonLabel1"
@@ -255,9 +301,11 @@ SwitchBackground1.Text = ""
 SwitchBackground1.AutoButtonColor = false
 SwitchBackground1.Parent = ButtonFrame1
 
-local SwitchCorner1 = Instance.new("UICorner")
-SwitchCorner1.CornerRadius = UDim.new(0, 16)
-SwitchCorner1.Parent = SwitchBackground1
+local SwitchBackground1Corner = Instance.new("UICorner")
+SwitchBackground1Corner.CornerRadius = UDim.new(1, 0)
+SwitchBackground1Corner.Parent = SwitchBackground1
+
+CreateMainBorderStroke(SwitchBackground1)
 
 local SwitchCircle1 = Instance.new("Frame")
 SwitchCircle1.Name = "SwitchCircle1"
@@ -267,9 +315,9 @@ SwitchCircle1.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 SwitchCircle1.BorderSizePixel = 0
 SwitchCircle1.Parent = SwitchBackground1
 
-local CircleCorner1 = Instance.new("UICorner")
-CircleCorner1.CornerRadius = UDim.new(1, 0)
-CircleCorner1.Parent = SwitchCircle1
+local SwitchCircle1Corner = Instance.new("UICorner")
+SwitchCircle1Corner.CornerRadius = UDim.new(1, 0)
+SwitchCircle1Corner.Parent = SwitchCircle1
 
 local ButtonFrame2 = Instance.new("Frame")
 ButtonFrame2.Name = "ButtonFrame2"
@@ -280,9 +328,11 @@ ButtonFrame2.BackgroundTransparency = 0.4
 ButtonFrame2.BorderSizePixel = 0
 ButtonFrame2.Parent = AntiMenuList
 
-local ButtonCorner2 = Instance.new("UICorner")
-ButtonCorner2.CornerRadius = UDim.new(0, 16)
-ButtonCorner2.Parent = ButtonFrame2
+local ButtonFrame2Corner = Instance.new("UICorner")
+ButtonFrame2Corner.CornerRadius = UDim.new(0, 8)
+ButtonFrame2Corner.Parent = ButtonFrame2
+
+CreateMainBorderStroke(ButtonFrame2)
 
 local ButtonLabel2 = Instance.new("TextLabel")
 ButtonLabel2.Name = "ButtonLabel2"
@@ -308,9 +358,11 @@ SwitchBackground2.Text = ""
 SwitchBackground2.AutoButtonColor = false
 SwitchBackground2.Parent = ButtonFrame2
 
-local SwitchCorner2 = Instance.new("UICorner")
-SwitchCorner2.CornerRadius = UDim.new(0, 16)
-SwitchCorner2.Parent = SwitchBackground2
+local SwitchBackground2Corner = Instance.new("UICorner")
+SwitchBackground2Corner.CornerRadius = UDim.new(1, 0)
+SwitchBackground2Corner.Parent = SwitchBackground2
+
+CreateMainBorderStroke(SwitchBackground2)
 
 local SwitchCircle2 = Instance.new("Frame")
 SwitchCircle2.Name = "SwitchCircle2"
@@ -320,9 +372,9 @@ SwitchCircle2.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 SwitchCircle2.BorderSizePixel = 0
 SwitchCircle2.Parent = SwitchBackground2
 
-local CircleCorner2 = Instance.new("UICorner")
-CircleCorner2.CornerRadius = UDim.new(1, 0)
-CircleCorner2.Parent = SwitchCircle2
+local SwitchCircle2Corner = Instance.new("UICorner")
+SwitchCircle2Corner.CornerRadius = UDim.new(1, 0)
+SwitchCircle2Corner.Parent = SwitchCircle2
 
 local ButtonFrame3 = Instance.new("Frame")
 ButtonFrame3.Name = "ButtonFrame3"
@@ -333,9 +385,11 @@ ButtonFrame3.BackgroundTransparency = 0.4
 ButtonFrame3.BorderSizePixel = 0
 ButtonFrame3.Parent = AntiMenuList
 
-local ButtonCorner3 = Instance.new("UICorner")
-ButtonCorner3.CornerRadius = UDim.new(0, 16)
-ButtonCorner3.Parent = ButtonFrame3
+local ButtonFrame3Corner = Instance.new("UICorner")
+ButtonFrame3Corner.CornerRadius = UDim.new(0, 8)
+ButtonFrame3Corner.Parent = ButtonFrame3
+
+CreateMainBorderStroke(ButtonFrame3)
 
 local ButtonLabel3 = Instance.new("TextLabel")
 ButtonLabel3.Name = "ButtonLabel3"
@@ -361,9 +415,11 @@ SwitchBackground3.Text = ""
 SwitchBackground3.AutoButtonColor = false
 SwitchBackground3.Parent = ButtonFrame3
 
-local SwitchCorner3 = Instance.new("UICorner")
-SwitchCorner3.CornerRadius = UDim.new(0, 16)
-SwitchCorner3.Parent = SwitchBackground3
+local SwitchBackground3Corner = Instance.new("UICorner")
+SwitchBackground3Corner.CornerRadius = UDim.new(1, 0)
+SwitchBackground3Corner.Parent = SwitchBackground3
+
+CreateMainBorderStroke(SwitchBackground3)
 
 local SwitchCircle3 = Instance.new("Frame")
 SwitchCircle3.Name = "SwitchCircle3"
@@ -373,9 +429,9 @@ SwitchCircle3.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 SwitchCircle3.BorderSizePixel = 0
 SwitchCircle3.Parent = SwitchBackground3
 
-local CircleCorner3 = Instance.new("UICorner")
-CircleCorner3.CornerRadius = UDim.new(1, 0)
-CircleCorner3.Parent = SwitchCircle3
+local SwitchCircle3Corner = Instance.new("UICorner")
+SwitchCircle3Corner.CornerRadius = UDim.new(1, 0)
+SwitchCircle3Corner.Parent = SwitchCircle3
 
 local PlayerButtonFrame1 = Instance.new("Frame")
 PlayerButtonFrame1.Name = "PlayerButtonFrame1"
@@ -386,9 +442,11 @@ PlayerButtonFrame1.BackgroundTransparency = 0.4
 PlayerButtonFrame1.BorderSizePixel = 0
 PlayerButtonFrame1.Parent = PlayerMenuList
 
-local PlayerButtonCorner1 = Instance.new("UICorner")
-PlayerButtonCorner1.CornerRadius = UDim.new(0, 16)
-PlayerButtonCorner1.Parent = PlayerButtonFrame1
+local PlayerButtonFrame1Corner = Instance.new("UICorner")
+PlayerButtonFrame1Corner.CornerRadius = UDim.new(0, 8)
+PlayerButtonFrame1Corner.Parent = PlayerButtonFrame1
+
+CreateMainBorderStroke(PlayerButtonFrame1)
 
 local PlayerButtonLabel1 = Instance.new("TextLabel")
 PlayerButtonLabel1.Name = "PlayerButtonLabel1"
@@ -414,9 +472,11 @@ PlayerSwitchBackground1.Text = ""
 PlayerSwitchBackground1.AutoButtonColor = false
 PlayerSwitchBackground1.Parent = PlayerButtonFrame1
 
-local PlayerSwitchCorner1 = Instance.new("UICorner")
-PlayerSwitchCorner1.CornerRadius = UDim.new(0, 16)
-PlayerSwitchCorner1.Parent = PlayerSwitchBackground1
+local PlayerSwitchBackground1Corner = Instance.new("UICorner")
+PlayerSwitchBackground1Corner.CornerRadius = UDim.new(1, 0)
+PlayerSwitchBackground1Corner.Parent = PlayerSwitchBackground1
+
+CreateMainBorderStroke(PlayerSwitchBackground1)
 
 local PlayerSwitchCircle1 = Instance.new("Frame")
 PlayerSwitchCircle1.Name = "PlayerSwitchCircle1"
@@ -426,9 +486,9 @@ PlayerSwitchCircle1.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 PlayerSwitchCircle1.BorderSizePixel = 0
 PlayerSwitchCircle1.Parent = PlayerSwitchBackground1
 
-local PlayerCircleCorner1 = Instance.new("UICorner")
-PlayerCircleCorner1.CornerRadius = UDim.new(1, 0)
-PlayerCircleCorner1.Parent = PlayerSwitchCircle1
+local PlayerSwitchCircle1Corner = Instance.new("UICorner")
+PlayerSwitchCircle1Corner.CornerRadius = UDim.new(1, 0)
+PlayerSwitchCircle1Corner.Parent = PlayerSwitchCircle1
 
 local PlayerButtonFrame2 = Instance.new("Frame")
 PlayerButtonFrame2.Name = "PlayerButtonFrame2"
@@ -439,9 +499,11 @@ PlayerButtonFrame2.BackgroundTransparency = 0.4
 PlayerButtonFrame2.BorderSizePixel = 0
 PlayerButtonFrame2.Parent = PlayerMenuList
 
-local PlayerButtonCorner2 = Instance.new("UICorner")
-PlayerButtonCorner2.CornerRadius = UDim.new(0, 16)
-PlayerButtonCorner2.Parent = PlayerButtonFrame2
+local PlayerButtonFrame2Corner = Instance.new("UICorner")
+PlayerButtonFrame2Corner.CornerRadius = UDim.new(0, 8)
+PlayerButtonFrame2Corner.Parent = PlayerButtonFrame2
+
+CreateMainBorderStroke(PlayerButtonFrame2)
 
 local PlayerButtonLabel2 = Instance.new("TextLabel")
 PlayerButtonLabel2.Name = "PlayerButtonLabel2"
@@ -467,9 +529,11 @@ PlayerSwitchBackground2.Text = ""
 PlayerSwitchBackground2.AutoButtonColor = false
 PlayerSwitchBackground2.Parent = PlayerButtonFrame2
 
-local PlayerSwitchCorner2 = Instance.new("UICorner")
-PlayerSwitchCorner2.CornerRadius = UDim.new(0, 16)
-PlayerSwitchCorner2.Parent = PlayerSwitchBackground2
+local PlayerSwitchBackground2Corner = Instance.new("UICorner")
+PlayerSwitchBackground2Corner.CornerRadius = UDim.new(1, 0)
+PlayerSwitchBackground2Corner.Parent = PlayerSwitchBackground2
+
+CreateMainBorderStroke(PlayerSwitchBackground2)
 
 local PlayerSwitchCircle2 = Instance.new("Frame")
 PlayerSwitchCircle2.Name = "PlayerSwitchCircle2"
@@ -479,9 +543,9 @@ PlayerSwitchCircle2.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 PlayerSwitchCircle2.BorderSizePixel = 0
 PlayerSwitchCircle2.Parent = PlayerSwitchBackground2
 
-local PlayerCircleCorner2 = Instance.new("UICorner")
-PlayerCircleCorner2.CornerRadius = UDim.new(1, 0)
-PlayerCircleCorner2.Parent = PlayerSwitchCircle2
+local PlayerSwitchCircle2Corner = Instance.new("UICorner")
+PlayerSwitchCircle2Corner.CornerRadius = UDim.new(1, 0)
+PlayerSwitchCircle2Corner.Parent = PlayerSwitchCircle2
 
 local PlayerButtonFrame3 = Instance.new("Frame")
 PlayerButtonFrame3.Name = "PlayerButtonFrame3"
@@ -492,9 +556,11 @@ PlayerButtonFrame3.BackgroundTransparency = 0.4
 PlayerButtonFrame3.BorderSizePixel = 0
 PlayerButtonFrame3.Parent = PlayerMenuList
 
-local PlayerButtonCorner3 = Instance.new("UICorner")
-PlayerButtonCorner3.CornerRadius = UDim.new(0, 16)
-PlayerButtonCorner3.Parent = PlayerButtonFrame3
+local PlayerButtonFrame3Corner = Instance.new("UICorner")
+PlayerButtonFrame3Corner.CornerRadius = UDim.new(0, 8)
+PlayerButtonFrame3Corner.Parent = PlayerButtonFrame3
+
+CreateMainBorderStroke(PlayerButtonFrame3)
 
 local PlayerButtonLabel3 = Instance.new("TextLabel")
 PlayerButtonLabel3.Name = "PlayerButtonLabel3"
@@ -520,9 +586,11 @@ PlayerSwitchBackground3.Text = ""
 PlayerSwitchBackground3.AutoButtonColor = false
 PlayerSwitchBackground3.Parent = PlayerButtonFrame3
 
-local PlayerSwitchCorner3 = Instance.new("UICorner")
-PlayerSwitchCorner3.CornerRadius = UDim.new(0, 16)
-PlayerSwitchCorner3.Parent = PlayerSwitchBackground3
+local PlayerSwitchBackground3Corner = Instance.new("UICorner")
+PlayerSwitchBackground3Corner.CornerRadius = UDim.new(1, 0)
+PlayerSwitchBackground3Corner.Parent = PlayerSwitchBackground3
+
+CreateMainBorderStroke(PlayerSwitchBackground3)
 
 local PlayerSwitchCircle3 = Instance.new("Frame")
 PlayerSwitchCircle3.Name = "PlayerSwitchCircle3"
@@ -532,9 +600,9 @@ PlayerSwitchCircle3.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 PlayerSwitchCircle3.BorderSizePixel = 0
 PlayerSwitchCircle3.Parent = PlayerSwitchBackground3
 
-local PlayerCircleCorner3 = Instance.new("UICorner")
-PlayerCircleCorner3.CornerRadius = UDim.new(1, 0)
-PlayerCircleCorner3.Parent = PlayerSwitchCircle3
+local PlayerSwitchCircle3Corner = Instance.new("UICorner")
+PlayerSwitchCircle3Corner.CornerRadius = UDim.new(1, 0)
+PlayerSwitchCircle3Corner.Parent = PlayerSwitchCircle3
 
 AntiMenuButton.MouseButton1Click:Connect(function()
     AntiMenuList.Visible = true
@@ -585,8 +653,8 @@ local function ToggleAutoSteal()
     local targetCircleColor = autoStealEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
     local targetCirclePos = autoStealEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
     
-    TweenService:Create(SwitchBackground1, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
-    TweenService:Create(SwitchCircle1, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    TweenService:Create(SwitchBackground1, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetBgColor}):Play()
+    TweenService:Create(SwitchCircle1, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
     
     if autoStealEnabled then
         for _, prompt in ipairs(workspace:GetDescendants()) do
@@ -641,8 +709,8 @@ local function ToggleAntiKick()
     local targetCircleColor = antiKickEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
     local targetCirclePos = antiKickEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
     
-    TweenService:Create(SwitchBackground2, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
-    TweenService:Create(SwitchCircle2, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    TweenService:Create(SwitchBackground2, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetBgColor}):Play()
+    TweenService:Create(SwitchCircle2, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
     
     if antiKickEnabled then
         local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
@@ -739,8 +807,8 @@ local function ToggleAntiRagdoll()
     local targetCircleColor = antiRagdollEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
     local targetCirclePos = antiRagdollEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
     
-    TweenService:Create(SwitchBackground3, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
-    TweenService:Create(SwitchCircle3, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    TweenService:Create(SwitchBackground3, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetBgColor}):Play()
+    TweenService:Create(SwitchCircle3, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
     
     if antiRagdollEnabled then
         startAntiRagdoll()
@@ -795,8 +863,8 @@ local function ToggleInfiniteJump()
     local targetCircleColor = infJumpEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
     local targetCirclePos = infJumpEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
     
-    TweenService:Create(PlayerSwitchBackground1, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
-    TweenService:Create(PlayerSwitchCircle1, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    TweenService:Create(PlayerSwitchBackground1, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetBgColor}):Play()
+    TweenService:Create(PlayerSwitchCircle1, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
     
     if infJumpEnabled then
         startInfiniteJump()
@@ -859,8 +927,8 @@ local function ToggleInvisiblePlayer()
     local targetCircleColor = invisiblePlayerEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
     local targetCirclePos = invisiblePlayerEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
     
-    TweenService:Create(PlayerSwitchBackground2, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
-    TweenService:Create(PlayerSwitchCircle2, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    TweenService:Create(PlayerSwitchBackground2, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetBgColor}):Play()
+    TweenService:Create(PlayerSwitchCircle2, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
     
     if invisiblePlayerEnabled then
         startInvisiblePlayer()
@@ -917,8 +985,8 @@ local function ToggleUnwalk()
     local targetCircleColor = unWalkEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
     local targetCirclePos = unWalkEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
     
-    TweenService:Create(PlayerSwitchBackground3, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
-    TweenService:Create(PlayerSwitchCircle3, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    TweenService:Create(PlayerSwitchBackground3, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetBgColor}):Play()
+    TweenService:Create(PlayerSwitchCircle3, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
     
     if unWalkEnabled then
         if LocalPlayer.Character then
@@ -941,6 +1009,166 @@ end
 
 PlayerSwitchBackground3.MouseButton1Click:Connect(ToggleUnwalk)
 
+local batAimbotEnabled = false
+local BAT_ENGAGE_RANGE = 5
+local AIMBOT_SPEED = 60
+local MELEE_OFFSET = 3
+local BAT_SWING_COOLDOWN = 0.12
+local lastBatSwing = 0
+local aimbotConnection = nil
+local lockedTarget = nil
+
+local C_PURPLE = Color3.fromRGB(180, 100, 255)
+local C_WHITE = Color3.fromRGB(240, 240, 255)
+
+local aimbotHighlight = Instance.new("Highlight")
+aimbotHighlight.Name = "BOKA_Hub_AimbotESP"
+aimbotHighlight.FillColor = C_PURPLE
+aimbotHighlight.OutlineColor = C_WHITE
+aimbotHighlight.FillTransparency = 0.5
+aimbotHighlight.OutlineTransparency = 0
+pcall(function() aimbotHighlight.Parent = CoreGui end)
+
+local function isTargetValid(targetChar)
+    if not targetChar then return false end
+    local hum = targetChar:FindFirstChildOfClass("Humanoid")
+    local hrp = targetChar:FindFirstChild("HumanoidRootPart")
+    local ff = targetChar:FindFirstChildOfClass("ForceField")
+    return hum and hrp and hum.Health > 0 and not ff
+end
+
+local function getBestTarget(myHRP)
+    if lockedTarget and isTargetValid(lockedTarget) then
+        return lockedTarget:FindFirstChild("HumanoidRootPart"), lockedTarget
+    end
+    local shortestDist = math.huge
+    local newTargetChar = nil
+    local newTargetHRP = nil
+    for _, targetPlayer in ipairs(Players:GetPlayers()) do
+        if targetPlayer ~= LocalPlayer and isTargetValid(targetPlayer.Character) then
+            local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local distance = (targetHRP.Position - myHRP.Position).Magnitude
+            if distance < shortestDist then
+                shortestDist = distance
+                newTargetHRP = targetHRP
+                newTargetChar = targetPlayer.Character
+            end
+        end
+    end
+    lockedTarget = newTargetChar
+    return newTargetHRP, newTargetChar
+end
+
+local function findBatTool()
+    local c = LocalPlayer.Character
+    if not c then return nil end
+    local bp = LocalPlayer:FindFirstChildOfClass("Backpack")
+    local SlapList = {"Bat", "Slap", "Iron Slap", "Gold Slap", "Diamond Slap", "Emerald Slap", "Ruby Slap", "Dark Matter Slap", "Flame Slap", "Nuclear Slap", "Galaxy Slap", "Glitched Slap"}
+    for _, ch in ipairs(c:GetChildren()) do
+        if ch:IsA("Tool") and ch.Name:lower():find("bat") then return ch end
+    end
+    if bp then
+        for _, ch in ipairs(bp:GetChildren()) do
+            if ch:IsA("Tool") and ch.Name:lower():find("bat") then return ch end
+        end
+    end
+    for _, name in ipairs(SlapList) do
+        local t = c:FindFirstChild(name) or (bp and bp:FindFirstChild(name))
+        if t then return t end
+    end
+end
+
+local function startBatAimbot()
+    if aimbotConnection then return end
+    local c = LocalPlayer.Character
+    if not c then return end
+    local h = c:FindFirstChild("HumanoidRootPart")
+    local hum = c:FindFirstChildOfClass("Humanoid")
+    if not h or not hum then return end
+    hum.AutoRotate = false
+    local attachment = h:FindFirstChild("AimbotAttachment") or Instance.new("Attachment", h)
+    attachment.Name = "AimbotAttachment"
+    local align = h:FindFirstChild("AimbotAlign") or Instance.new("AlignOrientation", h)
+    align.Name = "AimbotAlign"
+    align.Mode = Enum.OrientationAlignmentMode.OneAttachment
+    align.Attachment0 = attachment
+    align.MaxTorque = math.huge
+    align.Responsiveness = 200
+    batAimbotEnabled = true
+    aimbotConnection = RunService.Heartbeat:Connect(function()
+        if not batAimbotEnabled then return end
+        if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
+        local now = tick()
+        local currentHRP = LocalPlayer.Character.HumanoidRootPart
+        local currentHum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        local bat = findBatTool()
+        if bat and bat.Parent ~= LocalPlayer.Character then
+            pcall(function() currentHum:EquipTool(bat) end)
+        end
+        local targetHRP, targetChar = getBestTarget(currentHRP)
+        if targetHRP and targetChar then
+            aimbotHighlight.Adornee = targetChar
+            local targetVelocity = targetHRP.AssemblyLinearVelocity
+            local speed = targetVelocity.Magnitude
+            local dynamicPredictTime = math.clamp(speed / 150, 0.05, 0.2)
+            local predictedPos = targetHRP.Position + (targetVelocity * dynamicPredictTime)
+            local dirToTarget = (predictedPos - currentHRP.Position)
+            local distance3D = dirToTarget.Magnitude
+            local targetStandPos = predictedPos
+            if distance3D > 0 then
+                targetStandPos = predictedPos - (dirToTarget.Unit * MELEE_OFFSET)
+            end
+            align.CFrame = CFrame.lookAt(currentHRP.Position, predictedPos)
+            local moveDir = (targetStandPos - currentHRP.Position)
+            local distToStandPos = moveDir.Magnitude
+            if distToStandPos > 1 then
+                currentHRP.AssemblyLinearVelocity = moveDir.Unit * AIMBOT_SPEED
+            else
+                currentHRP.AssemblyLinearVelocity = targetVelocity
+            end
+            if distToStandPos <= BAT_ENGAGE_RANGE then
+                if bat and bat.Parent == LocalPlayer.Character and (now - lastBatSwing) >= BAT_SWING_COOLDOWN then
+                    lastBatSwing = now
+                    pcall(function() bat:Activate() end)
+                end
+            end
+        else
+            lockedTarget = nil
+            currentHRP.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+            aimbotHighlight.Adornee = nil
+        end
+    end)
+end
+
+local function stopBatAimbot()
+    batAimbotEnabled = false
+    if aimbotConnection then
+        aimbotConnection:Disconnect()
+        aimbotConnection = nil
+    end
+    local c = LocalPlayer.Character
+    local h = c and c:FindFirstChild("HumanoidRootPart")
+    local hum = c and c:FindFirstChildOfClass("Humanoid")
+    if h then
+        local att = h:FindFirstChild("AimbotAttachment")
+        if att then att:Destroy() end
+        local al = h:FindFirstChild("AimbotAlign")
+        if al then al:Destroy() end
+        h.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+    end
+    if hum then hum.AutoRotate = true end
+    lockedTarget = nil
+    aimbotHighlight.Adornee = nil
+end
+
+BigButton.MouseButton1Click:Connect(function()
+    if batAimbotEnabled then
+        stopBatAimbot()
+    else
+        startBatAimbot()
+    end
+end)
+
 local TargetWidth = 380
 local TargetHeight = 320
 local MinimizedHeight = 48
@@ -948,7 +1176,7 @@ local MinimizedHeight = 48
 MainFrame.Size = UDim2.new(0, 0, 0, 0)
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 
-local OpenTweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+local OpenTweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 local OpenTween = TweenService:Create(MainFrame, OpenTweenInfo, {
     Size = UDim2.new(0, TargetWidth, 0, TargetHeight),
     Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -981,7 +1209,8 @@ local dragInput, dragStart, startPos
 
 local function update(input)
     local delta = input.Position - dragStart
-    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    TweenService:Create(MainFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = targetPos}):Play()
 end
 
 MainFrame.InputBegan:Connect(function(input)
