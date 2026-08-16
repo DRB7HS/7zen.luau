@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
+local TweenService = game:GetService("TweenService")
 local lp = Players.LocalPlayer
 
 local STEAL_RADIUS = 60
@@ -13,9 +14,62 @@ local percentLabel = nil
 local bannerFrame = nil
 local infoLabel = nil
 
-
-local THEME_COLOR = Color3.fromRGB(138, 43, 226)
+local THEME_COLOR = Color3.fromRGB(139, 0, 0)
 local DARK_BG = Color3.fromRGB(10, 10, 10)
+
+local function CreateTextGlowStroke(Object)
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Parent = Object
+    Stroke.Color = Color3.fromRGB(255, 255, 255)
+    Stroke.Thickness = 2
+    Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+    Stroke.LineJoinMode = Enum.LineJoinMode.Round
+
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Parent = Stroke
+    Gradient.Rotation = 0
+    Gradient.Offset = Vector2.new(-1, 0)
+
+    Gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 180, 180)),
+        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))
+    }
+
+    local AnimationInfo = TweenInfo.new(2.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    local Track = TweenService:Create(Gradient, AnimationInfo, {Offset = Vector2.new(1, 0)})
+    Track:Play()
+end
+
+local function CreateMainBorderStroke(Object)
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Parent = Object
+    Stroke.Color = Color3.fromRGB(255, 255, 255)
+    Stroke.Thickness = 3
+    Stroke.Transparency = 0
+    Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    Stroke.LineJoinMode = Enum.LineJoinMode.Round
+
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Parent = Stroke
+    Gradient.Rotation = 0
+
+    Gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.15, Color3.fromRGB(30, 0, 0)),
+        ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 80, 80)),
+        ColorSequenceKeypoint.new(0.65, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.85, Color3.fromRGB(30, 0, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    }
+
+    local AnimationInfo = TweenInfo.new(7, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    local Track = TweenService:Create(Gradient, AnimationInfo, {Rotation = 360})
+    Track:Play()
+end
 
 local function updateTopBar()
     if not infoLabel then return end
@@ -35,15 +89,15 @@ local function updateTopBar()
             local dataPing = network.ServerStatsItem:FindFirstChild("Data Ping")
             if dataPing then ping = math.floor(dataPing:GetValue()) end
         end
-        infoLabel.Text = "VORTX GRAB | Ping: " .. ping .. "ms | FPS: " .. fps
+        infoLabel.Text = "7z Steal For Brainrot| Ping: " .. ping .. "ms | FPS: " .. fps
     end)
 end
 
 local function setupUI()
-    local sg = lp.PlayerGui:FindFirstChild("VORTX GRAB")
+    local sg = lp.PlayerGui:FindFirstChild("7z Steal")
     if not sg then
         sg = Instance.new("ScreenGui")
-        sg.Name = "VORTX GRAB"
+        sg.Name = "7z Steal"
         sg.ResetOnSpawn = false
         sg.Parent = lp.PlayerGui
     end
@@ -55,6 +109,7 @@ local function setupUI()
         container.BackgroundTransparency = 1
         container.ZIndex = 10
         container.Parent = sg
+        CreateMainBorderStroke(container)
 
         bannerFrame = Instance.new("Frame")
         bannerFrame.Size = UDim2.new(1, 0, 0, 30)
@@ -65,27 +120,20 @@ local function setupUI()
         bannerFrame.ZIndex = 10
         bannerFrame.Parent = container
         Instance.new("UICorner", bannerFrame).CornerRadius = UDim.new(0, 8)
+        CreateMainBorderStroke(bannerFrame)
 
-        local bannerStroke = Instance.new("UIStroke", bannerFrame)
-        bannerStroke.Color = THEME_COLOR
-        bannerStroke.Thickness = 1.5
-
-        
         local iconImage = Instance.new("ImageLabel")
         iconImage.Name = "IconImage"
         iconImage.Size = UDim2.new(0, 22, 0, 22)
         iconImage.Position = UDim2.new(0, 6, 0.5, -11)
         iconImage.BackgroundTransparency = 1
-        iconImage.Image = "rbxassetid://86931703672593"
+        iconImage.Image = "rbxassetid://136450335437647"
         iconImage.ZIndex = 12
         iconImage.Parent = bannerFrame
 
         local iconCorner = Instance.new("UICorner", iconImage)
         iconCorner.CornerRadius = UDim.new(1, 0)
-
-        local iconStroke = Instance.new("UIStroke", iconImage)
-        iconStroke.Color = THEME_COLOR
-        iconStroke.Thickness = 2
+        CreateMainBorderStroke(iconImage)
 
         infoLabel = Instance.new("TextLabel")
         infoLabel.Size = UDim2.new(1, -34, 1, 0)
@@ -98,6 +146,7 @@ local function setupUI()
         infoLabel.TextXAlignment = Enum.TextXAlignment.Center
         infoLabel.ZIndex = 11
         infoLabel.Parent = bannerFrame
+        CreateTextGlowStroke(infoLabel)
 
         progressBarBg = Instance.new("Frame")
         progressBarBg.Size = UDim2.new(1, 0, 0, 14)
@@ -108,6 +157,7 @@ local function setupUI()
         progressBarBg.ZIndex = 10
         progressBarBg.Parent = container
         Instance.new("UICorner", progressBarBg).CornerRadius = UDim.new(0, 10)
+        CreateMainBorderStroke(progressBarBg)
 
         progressFill = Instance.new("Frame")
         progressFill.Size = UDim2.new(0, 0, 1, 0)
@@ -115,6 +165,7 @@ local function setupUI()
         progressFill.ZIndex = 11
         progressFill.Parent = progressBarBg
         Instance.new("UICorner", progressFill).CornerRadius = UDim.new(0, 10)
+        CreateMainBorderStroke(progressFill)
 
         percentLabel = Instance.new("TextLabel")
         percentLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -125,6 +176,7 @@ local function setupUI()
         percentLabel.Text = "0%"
         percentLabel.ZIndex = 12
         percentLabel.Parent = progressBarBg
+        CreateTextGlowStroke(percentLabel)
 
         updateTopBar()
     end
