@@ -86,6 +86,7 @@ BigButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 BigButton.TextSize = 16
 BigButton.Font = Enum.Font.FredokaOne
 BigButton.AutoButtonColor = false
+BigButton.ZIndex = 2
 BigButton.Parent = ScreenGui
 
 local BigButtonCorner = Instance.new("UICorner")
@@ -100,6 +101,7 @@ BigButtonImage.BackgroundTransparency = 1
 BigButtonImage.Image = "rbxassetid://136450335437647"
 BigButtonImage.ImageTransparency = 0
 BigButtonImage.ScaleType = Enum.ScaleType.Crop
+BigButtonImage.ZIndex = 1
 BigButtonImage.Parent = BigButton
 
 local BigButtonImageCorner = Instance.new("UICorner")
