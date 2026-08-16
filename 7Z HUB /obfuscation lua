@@ -5,6 +5,7 @@ local UIS = UserInputService
 local ProximityPromptService = game:GetService("ProximityPromptService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local Stats = game:GetService("Stats")
 
 local LocalPlayer = Players.LocalPlayer
 local LP = LocalPlayer
@@ -21,6 +22,299 @@ end)
 if not ScreenGui.Parent then
     ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 end
+
+local lp = Players.LocalPlayer
+
+local STEAL_RADIUS = 60
+local STEAL_DURATION = 1.4
+local isStealing = false
+local StealData = {}
+local progressBarBg = nil
+local progressFill = nil
+local percentLabel = nil
+local bannerFrame = nil
+local infoLabel = nil
+
+local THEME_COLOR = Color3.fromRGB(139, 0, 0)
+local DARK_BG = Color3.fromRGB(15, 0, 0)
+
+local function CreateTextGlowStroke(Object)
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Parent = Object
+    Stroke.Color = Color3.fromRGB(255, 255, 255)
+    Stroke.Thickness = 2
+    Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+    Stroke.LineJoinMode = Enum.LineJoinMode.Round
+
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Parent = Stroke
+    Gradient.Rotation = 0
+    Gradient.Offset = Vector2.new(-1, 0)
+
+    Gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 180, 180)),
+        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))
+    }
+
+    local AnimationInfo = TweenInfo.new(2.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    local Track = TweenService:Create(Gradient, AnimationInfo, {Offset = Vector2.new(1, 0)})
+    Track:Play()
+end
+
+local function CreateMainBorderStroke(Object)
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Parent = Object
+    Stroke.Color = Color3.fromRGB(255, 255, 255)
+    Stroke.Thickness = 3
+    Stroke.Transparency = 0
+    Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    Stroke.LineJoinMode = Enum.LineJoinMode.Round
+
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Parent = Stroke
+    Gradient.Rotation = 0
+
+    Gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.15, Color3.fromRGB(30, 0, 0)),
+        ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 80, 80)),
+        ColorSequenceKeypoint.new(0.65, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.85, Color3.fromRGB(30, 0, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    }
+
+    local AnimationInfo = TweenInfo.new(7, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    local Track = TweenService:Create(Gradient, AnimationInfo, {Rotation = 360})
+    Track:Play()
+end
+
+local function updateTopBar()
+    if not infoLabel then return end
+    local fps = 60
+    local ping = 0
+    local framesCount = 0
+    local last = tick()
+    RunService.RenderStepped:Connect(function()
+        framesCount = framesCount + 1
+        if tick() - last >= 1 then
+            fps = framesCount
+            framesCount = 0
+            last = tick()
+        end
+        local network = Stats:FindFirstChild("Network")
+        if network and network:FindFirstChild("ServerStatsItem") then
+            local dataPing = network.ServerStatsItem:FindFirstChild("Data Ping")
+            if dataPing then ping = math.floor(dataPing:GetValue()) end
+        end
+        infoLabel.Text = "7z Steal For Brainrot| Ping: " .. ping .. "ms | FPS: " .. fps
+    end)
+end
+
+local function setupUI()
+    local sg = lp.PlayerGui:FindFirstChild("7z Steal")
+    if not sg then
+        sg = Instance.new("ScreenGui")
+        sg.Name = "7z Steal"
+        sg.ResetOnSpawn = false
+        sg.Parent = lp.PlayerGui
+    end
+
+    if not progressBarBg then
+        local container = Instance.new("Frame")
+        container.Size = UDim2.new(0, 320, 0, 70)
+        container.Position = UDim2.new(0.5, -160, 0, 35)
+        container.BackgroundTransparency = 1
+        container.ZIndex = 10
+        container.Parent = sg
+        Instance.new("UICorner", container).CornerRadius = UDim.new(0, 12)
+
+        bannerFrame = Instance.new("Frame")
+        bannerFrame.Size = UDim2.new(1, 0, 0, 30)
+        bannerFrame.Position = UDim2.new(0, 0, 0, 0)
+        bannerFrame.BackgroundColor3 = THEME_COLOR
+        bannerFrame.BackgroundTransparency = 0.85
+        bannerFrame.BorderSizePixel = 0
+        bannerFrame.ZIndex = 10
+        bannerFrame.Parent = container
+        Instance.new("UICorner", bannerFrame).CornerRadius = UDim.new(0, 12)
+        CreateMainBorderStroke(bannerFrame)
+
+        local iconImage = Instance.new("ImageLabel")
+        iconImage.Name = "IconImage"
+        iconImage.Size = UDim2.new(0, 22, 0, 22)
+        iconImage.Position = UDim2.new(0, 6, 0.5, -11)
+        iconImage.BackgroundTransparency = 1
+        iconImage.Image = "rbxassetid://136450335437647"
+        iconImage.ZIndex = 12
+        iconImage.Parent = bannerFrame
+
+        local iconCorner = Instance.new("UICorner", iconImage)
+        iconCorner.CornerRadius = UDim.new(1, 0)
+        CreateMainBorderStroke(iconImage)
+
+        infoLabel = Instance.new("TextLabel")
+        infoLabel.Size = UDim2.new(1, -34, 1, 0)
+        infoLabel.Position = UDim2.new(0, 30, 0, 0)
+        infoLabel.BackgroundTransparency = 1
+        infoLabel.Font = Enum.Font.GothamBold
+        infoLabel.TextSize = 14
+        infoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        infoLabel.Text = "7z Steal For Brainrot | Ping: 0ms | FPS: 0"
+        infoLabel.TextXAlignment = Enum.TextXAlignment.Center
+        infoLabel.ZIndex = 11
+        infoLabel.Parent = bannerFrame
+        CreateTextGlowStroke(infoLabel)
+
+        progressBarBg = Instance.new("Frame")
+        progressBarBg.Size = UDim2.new(1, 0, 0, 14)
+        progressBarBg.Position = UDim2.new(0, 0, 0, 34)
+        progressBarBg.BackgroundColor3 = DARK_BG
+        progressBarBg.BackgroundTransparency = 0.25
+        progressBarBg.Visible = true
+        progressBarBg.ZIndex = 10
+        progressBarBg.Parent = container
+        Instance.new("UICorner", progressBarBg).CornerRadius = UDim.new(0, 12)
+        CreateMainBorderStroke(progressBarBg)
+
+        progressFill = Instance.new("Frame")
+        progressFill.Size = UDim2.new(0, 0, 1, 0)
+        progressFill.BackgroundColor3 = THEME_COLOR
+        progressFill.ZIndex = 11
+        progressFill.Parent = progressBarBg
+        Instance.new("UICorner", progressFill).CornerRadius = UDim.new(0, 12)
+        CreateMainBorderStroke(progressFill)
+
+        percentLabel = Instance.new("TextLabel")
+        percentLabel.Size = UDim2.new(1, 0, 1, 0)
+        percentLabel.BackgroundTransparency = 1
+        percentLabel.Font = Enum.Font.GothamBold
+        percentLabel.TextSize = 11
+        percentLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+        percentLabel.Text = "0%"
+        percentLabel.ZIndex = 12
+        percentLabel.Parent = progressBarBg
+        CreateTextGlowStroke(percentLabel)
+
+        updateTopBar()
+    end
+end
+
+local function getHRP()
+    local c = lp.Character
+    if c then return c:FindFirstChild("HumanoidRootPart") or c:FindFirstChild("Torso") or c:FindFirstChild("UpperTorso") end
+    return nil
+end
+
+local function isMyPlotByName(pn)
+    local plots = workspace:FindFirstChild("Plots")
+    if not plots then return false end
+    local plot = plots:FindFirstChild(pn)
+    if not plot then return false end
+    local sign = plot:FindFirstChild("PlotSign")
+    if sign then
+        local yb = sign:FindFirstChild("YourBase")
+        if yb and yb:IsA("BillboardGui") then return yb.Enabled == true end
+    end
+    return false
+end
+
+local function findNearestPrompt()
+    local hrp = getHRP()
+    if not hrp then return nil end
+    local plots = workspace:FindFirstChild("Plots")
+    if not plots then return nil end
+    local nearest, dist = nil, math.huge
+    for _, plot in ipairs(plots:GetChildren()) do
+        if isMyPlotByName(plot.Name) then continue end
+        local pods = plot:FindFirstChild("AnimalPodiums")
+        if not pods then continue end
+        for _, pod in ipairs(pods:GetChildren()) do
+            local base = pod:FindFirstChild("Base")
+            if not base then continue end
+            local spawn = base:FindFirstChild("Spawn")
+            if not spawn then continue end
+            local d = (spawn.Position - hrp.Position).Magnitude
+            if d <= STEAL_RADIUS and d < dist then
+                local att = spawn:FindFirstChild("PromptAttachment")
+                if att then
+                    for _, p in ipairs(att:GetChildren()) do
+                        if p:IsA("ProximityPrompt") and p.ActionText and p.ActionText:find("Steal") then
+                            nearest, dist = p, d
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nearest
+end
+
+local function updateProgressBar(p)
+    if progressFill then
+        progressFill.Size = UDim2.new(p, 0, 1, 0)
+    end
+    if percentLabel then
+        percentLabel.Text = math.floor(p * 100) .. "%"
+    end
+end
+
+local function executeSteal(prompt)
+    if isStealing then return end
+    if not StealData[prompt] then
+        StealData[prompt] = {hold = {}, trigger = {}, ready = true}
+        if getconnections then
+            for _, c in ipairs(getconnections(prompt.PromptButtonHoldBegan)) do
+                if c.Function then table.insert(StealData[prompt].hold, c.Function) end
+            end
+            for _, c in ipairs(getconnections(prompt.Triggered)) do
+                if c.Function then table.insert(StealData[prompt].trigger, c.Function) end
+            end
+        end
+    end
+    local data = StealData[prompt]
+    if not data.ready then return end
+    data.ready = false
+    isStealing = true
+    local startTime = tick()
+    task.spawn(function()
+        for _, f in ipairs(data.hold) do pcall(f) end
+        while tick() - startTime < STEAL_DURATION do
+            local elapsed = tick() - startTime
+            local p = math.clamp(elapsed / STEAL_DURATION, 0, 1)
+            updateProgressBar(p)
+            task.wait()
+        end
+        updateProgressBar(1)
+        for _, f in ipairs(data.trigger) do pcall(f) end
+        task.wait(0.05)
+        updateProgressBar(0)
+        data.ready = true
+        isStealing = false
+    end)
+end
+
+local heartbeatConn
+local function startAutoSteal()
+    setupUI()
+    if heartbeatConn then return end
+    heartbeatConn = RunService.Heartbeat:Connect(function()
+        if isStealing then return end
+        local success, prompt = pcall(findNearestPrompt)
+        if success and prompt then pcall(executeSteal, prompt) end
+    end)
+end
+
+local function stopAutoSteal()
+    if heartbeatConn then heartbeatConn:Disconnect() heartbeatConn = nil end
+    isStealing = false
+    updateProgressBar(0)
+end
+
+startAutoSteal()
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
@@ -239,7 +533,7 @@ ButtonLabel1.Name = "ButtonLabel1"
 ButtonLabel1.Size = UDim2.new(1, -60, 1, 0)
 ButtonLabel1.Position = UDim2.new(0, 12, 0, 0)
 ButtonLabel1.BackgroundTransparency = 1
-ButtonLabel1.Text = "Auto Steal"
+ButtonLabel1.Text = "Auto Grab"
 ButtonLabel1.TextColor3 = Color3.fromRGB(255, 255, 255)
 ButtonLabel1.TextSize = 14
 ButtonLabel1.Font = Enum.Font.FredokaOne
@@ -785,7 +1079,7 @@ local function HandlePrompt(prompt)
     if autoStealEnabled and prompt:IsA("ProximityPrompt") and prompt.Enabled then
         local actionText = prompt.ActionText:lower()
         local objectText = prompt.ObjectText:lower()
-        if actionText:find("steal") or objectText:find("steal") then
+        if actionText:find("Grab") or objectText:find("Grab") then
             if not activeHolds[prompt] then
                 activeHolds[prompt] = true
                 task.spawn(function()
@@ -845,7 +1139,7 @@ local function CheckText(str)
     if not antiKickEnabled or not str then return end
     local lowerStr = str:lower()
     if lowerStr:find("you stole") or lowerStr:find("your stole") then
-        LocalPlayer:Kick("7zen Script\n" .. str)
+        LocalPlayer:Kick("7zen Script\n✅" .. str)
     end
 end
 
