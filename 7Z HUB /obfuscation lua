@@ -1071,12 +1071,12 @@ AutoBatBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-local autoStealEnabled = false
+local autoGrabEnabled = false
 local activeHolds = {}
 local promptConnection = nil
 
 local function HandlePrompt(prompt)
-    if autoStealEnabled and prompt:IsA("ProximityPrompt") and prompt.Enabled then
+    if autoGrabEnabled and prompt:IsA("ProximityPrompt") and prompt.Enabled then
         local actionText = prompt.ActionText:lower()
         local objectText = prompt.ObjectText:lower()
         if actionText:find("Grab") or objectText:find("Grab") then
@@ -1088,7 +1088,7 @@ local function HandlePrompt(prompt)
                     
                     prompt:InputHoldBegin()
                     
-                    while autoStealEnabled and prompt and prompt.Parent and prompt.Enabled and (tick() - startTime < holdTime + 0.1) do
+                    while autoGrabEnabled and prompt and prompt.Parent and prompt.Enabled and (tick() - startTime < holdTime + 0.1) do
                         task.wait(0.01)
                     end
                     
@@ -1103,8 +1103,8 @@ local function HandlePrompt(prompt)
     end
 end
 
-local function ToggleAutoSteal()
-    autoStealEnabled = not autoStealEnabled
+local function ToggleAutoGrab()
+    autoGrabEnabled = not autoStealEnabled
     
     local targetBgColor = autoStealEnabled and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 0, 0)
     local targetCircleColor = autoStealEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
