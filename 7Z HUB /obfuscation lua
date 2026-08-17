@@ -1115,6 +1115,72 @@ CreateTextGlowStroke(FloorStealText)
 
 local isFloorStealActive = false
 
+local TPDownBtn = Instance.new("ImageButton")
+TPDownBtn.Name = "TPDownBtn"
+TPDownBtn.Size = UDim2.new(0, 50, 0, 50)
+TPDownBtn.Position = UDim2.new(0.5, -25, 0.8, 0)
+TPDownBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TPDownBtn.BorderSizePixel = 0
+TPDownBtn.Image = "rbxassetid://136450335437647"
+TPDownBtn.AutoButtonColor = true
+
+local TPStroke = Instance.new("UIStroke")
+TPStroke.Thickness = 2
+TPStroke.Color = Color3.fromRGB(255, 0, 0)
+TPStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+TPStroke.Parent = TPDownBtn
+
+local TPTitle = Instance.new("TextLabel")
+TPTitle.Name = "TPTitle"
+TPTitle.Size = UDim2.new(1, 0, 0.3, 0)
+TPTitle.Position = UDim2.new(0, 0, 1, 2)
+TPTitle.BackgroundTransparency = 1
+TPTitle.Text = "TP Down"
+TPTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+TPTitle.TextSize = 12
+TPTitle.Font = Enum.Font.SourceSansBold
+TPTitle.Parent = TPDownBtn
+
+local function tpDown()
+    local character = LocalPlayer.Character
+    if not character then return end
+
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {character}
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+
+    local rayResult = Workspace:Raycast(hrp.Position, Vector3.new(0, -500, 0), raycastParams)
+
+    if rayResult then
+        hrp.CFrame = CFrame.new(rayResult.Position + Vector3.new(0, 3, 0))
+    else
+        hrp.CFrame = CFrame.new(hrp.Position.X, -6.84, hrp.Position.Z)
+    end
+end
+
+TPDownBtn.MouseButton1Click:Connect(tpDown)
+    local character = LocalPlayer.Character
+    if not character then return end
+
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {character}
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+
+    local rayResult = workspace:Raycast(hrp.Position, Vector3.new(0, -500, 0), raycastParams)
+
+    if rayResult then
+        hrp.CFrame = CFrame.new(rayResult.Position + Vector3.new(0, 3, 0))
+    else
+        hrp.CFrame = CFrame.new(hrp.Position.X, -6.84, hrp.Position.Z)
+    end
+end)
+
 local function createElevator()
     local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local HRP = Character:WaitForChild("HumanoidRootPart")
