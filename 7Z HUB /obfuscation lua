@@ -1450,37 +1450,45 @@ local activeHolds = {}
 local promptConnection = nil
 
 local function HandlePrompt(prompt)
-    if autoGrabEnabled and prompt:IsA("ProximityPrompt") and prompt.Enabled then
-        local actionText = prompt.ActionText:lower()
-        local objectText = prompt.ObjectText:lower()
-        if actionText:find("grab") or objectText:find("grab") or actionText:find("purchase") or objectText:find("purchase") or actionText:find("tack") or objectText:find("tack") or actionText == "" then
-            if not activeHolds[prompt] then
-                activeHolds[prompt] = true
-                task.spawn(function()
-                    if fireproximityprompt then
-                        while autoGrabEnabled and prompt and prompt.Parent and prompt.Enabled do
-                            fireproximityprompt(prompt)
-                            task.wait(0.05)
+    if autoGrabEnabled and prompt and prompt:IsA("ProximityPrompt") and prompt.Enabled then
+        pcall(function()
+            local actionText = prompt.ActionText and prompt.ActionText:lower() or ""
+            local objectText = prompt.ObjectText and prompt.ObjectText:lower() or ""
+            if actionText:find("grab") or objectText:find("grab") or actionText:find("purchase") or objectText:find("purchase") or actionText:find("tack") or objectText:find("tack") or actionText == "" then
+                if not activeHolds[prompt] then
+                    activeHolds[prompt] = true
+                    task.spawn(function()
+                        if fireproximityprompt then
+                            while autoGrabEnabled and prompt and prompt.Parent and prompt.Enabled do
+                                pcall(function()
+                                    fireproximityprompt(prompt)
+                                end)
+                                task.wait(0.1)
+                            end
+                        else
+                            local holdTime = (prompt.HoldDuration and prompt.HoldDuration > 0) and prompt.HoldDuration or 0.1
+                            local startTime = tick()
+                            
+                            pcall(function()
+                                prompt:InputHoldBegin()
+                            end)
+                            
+                            while autoGrabEnabled and prompt and prompt.Parent and prompt.Enabled and (tick() - startTime < holdTime + 0.05) do
+                                task.wait(0.02)
+                            end
+                            
+                            pcall(function()
+                                if prompt and prompt.Parent then
+                                    prompt:InputHoldEnd()
+                                end
+                            end)
                         end
-                    else
-                        local holdTime = prompt.HoldDuration > 0 and prompt.HoldDuration or 0.1
-                        local startTime = tick()
                         
-                        prompt:InputHoldBegin()
-                        
-                        while autoGrabEnabled and prompt and prompt.Parent and prompt.Enabled and (tick() - startTime < holdTime + 0.05) do
-                            task.wait(0.01)
-                        end
-                        
-                        if prompt and prompt.Parent then
-                            prompt:InputHoldEnd()
-                        end
-                    end
-                    
-                    activeHolds[prompt] = nil
-                end)
+                        activeHolds[prompt] = nil
+                    end)
+                end
             end
-        end
+        end)
     end
 end
 
