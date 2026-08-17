@@ -1991,77 +1991,76 @@ end
 
 PlayerSwitchBackground3.MouseButton1Click:Connect(function() ToggleUnwalk() end)
 
-‏local xrayBaseEnabled = false
-‏local originalTransparencies = {}
-‏local xrayConn = nil
+local xrayBaseEnabled = false
+local originalTransparencies = {}
+local xrayConn = nil
 
-‏local function applyXRayToPart(part)
+local function applyXRayToPart(part)
     if part and part:IsA("BasePart") then
-‏        pcall(function()
-‏            if originalTransparencies[part] == nil then
-‏                originalTransparencies[part] = part.LocalTransparencyModifier
-‏            end
-‏            part.LocalTransparencyModifier = xrayBaseEnabled and 0.7 or originalTransparencies[part]
-‏        end)
-‏    end
-‏end
+        pcall(function()
+            if originalTransparencies[part] == nil then
+                originalTransparencies[part] = part.LocalTransparencyModifier
+            end
+            part.LocalTransparencyModifier = xrayBaseEnabled and 0.7 or originalTransparencies[part]
+        end)
+    end
+end
 
 local function applyXRay()
-‏    task.spawn(function()
-‏        for _, desc in ipairs(workspace:GetDescendants()) do
-‏            if desc and (desc.Name == "Base" or desc.Name:lower():find("base")) then
-‏                if desc:IsA("BasePart") then
-‏                    applyXRayToPart(desc)
-‏                end
-‏                for _, child in ipairs(desc:GetDescendants()) do
-‏                    if child and child:IsA("BasePart") then
-‏                        applyXRayToPart(child)
-‏                    end
-‏                end
-‏            end
-‏        end
-‏    end)
-‏end
+    task.spawn(function()
+        for _, desc in ipairs(workspace:GetDescendants()) do
+            if desc and (desc.Name == "Base" or desc.Name:lower():find("base")) then
+                if desc:IsA("BasePart") then
+                    applyXRayToPart(desc)
+                end
+                for _, child in ipairs(desc:GetDescendants()) do
+                    if child and child:IsA("BasePart") then
+                        applyXRayToPart(child)
+                    end
+                end
+            end
+        end
+    end)
+end
 
-‏local function ToggleXRayBase(override)
-‏    if override ~= nil then
-‏        xrayBaseEnabled = override
-‏    else
-‏        xrayBaseEnabled = not xrayBaseEnabled
-‏    end
+local function ToggleXRayBase(override)
+    if override ~= nil then
+        xrayBaseEnabled = override
+    else
+        xrayBaseEnabled = not xrayBaseEnabled
+    end
 
-‏    local targetBgColor = xrayBaseEnabled and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 0, 0)
-‏    local targetCircleColor = xrayBaseEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
-‏    local targetCirclePos = xrayBaseEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+    local targetBgColor = xrayBaseEnabled and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 0, 0)
+    local targetCircleColor = xrayBaseEnabled and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 0, 0)
+    local targetCirclePos = xrayBaseEnabled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
 
-‏    pcall(function()
-‏        TweenService:Create(HeplarSwitchBackground1, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
-‏        TweenService:Create(HeplarSwitchCircle1, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
-‏    end)
+    pcall(function()
+        TweenService:Create(HeplarSwitchBackground1, TweenInfo.new(0.2), {BackgroundColor3 = targetBgColor}):Play()
+        TweenService:Create(HeplarSwitchCircle1, TweenInfo.new(0.2), {BackgroundColor3 = targetCircleColor, Position = targetCirclePos}):Play()
+    end)
 
-‏    applyXRay()
+    applyXRay()
 
-‏    if xrayBaseEnabled then
-‏        if not xrayConn then
-‏            xrayConn = workspace.DescendantAdded:Connect(function(desc)
-‏                if desc and (desc.Name == "Base" or desc.Name:lower():find("base")) then
+    if xrayBaseEnabled then
+        if not xrayConn then
+            xrayConn = workspace.DescendantAdded:Connect(function(desc)
+                if desc and (desc.Name == "Base" or desc.Name:lower():find("base")) then
                     task.wait(0.1)
-‏                    applyXRayToPart(desc)
-‏                end
-‏            end)
-‏        end
-‏    else
-‏        if xrayConn then
-‏            xrayConn:Disconnect()
-‏            xrayConn = nil
-‏        end
-‏    end
+                    applyXRayToPart(desc)
+                end
+            end)
+        end
+    else
+        if xrayConn then
+            xrayConn:Disconnect()
+            xrayConn = nil
+        end
+    end
     
-‏    pcall(function()
-‏        SaveSettings()
-‏    end)
-‏end
-
+    pcall(function()
+        SaveSettings()
+    end)
+end
 
 HeplarSwitchBackground1.MouseButton1Click:Connect(function() ToggleXRayBase() end)
 
