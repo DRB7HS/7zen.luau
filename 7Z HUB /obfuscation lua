@@ -909,6 +909,171 @@ AutoBatOverlayCorner.Parent = AutoBatOverlay
 CreateMainBorderStroke(AutoBatBtn)
 CreateTextGlowStroke(AutoBatText)
 
+local FloorStealBtn = Instance.new("TextButton")
+FloorStealBtn.Name = "FloorStealBtn"
+FloorStealBtn.Size = UDim2.new(0, 120, 0, 70)
+FloorStealBtn.Position = UDim2.new(1, -140, 0.4, -80)
+FloorStealBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+FloorStealBtn.BackgroundTransparency = 1
+FloorStealBtn.Text = ""
+FloorStealBtn.AutoButtonColor = false
+FloorStealBtn.Parent = ScreenGui
+
+local FloorStealCorner = Instance.new("UICorner")
+FloorStealCorner.CornerRadius = UDim.new(0, 16)
+FloorStealCorner.Parent = FloorStealBtn
+
+local FloorStealImg = Instance.new("ImageLabel")
+FloorStealImg.Name = "FloorStealImg"
+FloorStealImg.Size = UDim2.new(1, 0, 1, 0)
+FloorStealImg.Position = UDim2.new(0, 0, 0, 0)
+FloorStealImg.BackgroundTransparency = 1
+FloorStealImg.Image = "rbxassetid://136450335437647"
+FloorStealImg.ScaleType = Enum.ScaleType.Crop
+FloorStealImg.Parent = FloorStealBtn
+
+local FloorStealImgCorner = Instance.new("UICorner")
+FloorStealImgCorner.CornerRadius = UDim.new(0, 16)
+FloorStealImgCorner.Parent = FloorStealImg
+
+local FloorStealText = Instance.new("TextLabel")
+FloorStealText.Name = "FloorStealText"
+FloorStealText.Size = UDim2.new(1, 0, 1, 0)
+FloorStealText.Position = UDim2.new(0, 0, 0, 0)
+FloorStealText.BackgroundTransparency = 1
+FloorStealText.Text = "Floor\nSteal"
+FloorStealText.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloorStealText.TextSize = 20
+FloorStealText.Font = Enum.Font.FredokaOne
+FloorStealText.ZIndex = 3
+FloorStealText.Parent = FloorStealBtn
+
+local FloorStealOverlay = Instance.new("Frame")
+FloorStealOverlay.Name = "FloorStealOverlay"
+FloorStealOverlay.Size = UDim2.new(1, 0, 1, 0)
+FloorStealOverlay.Position = UDim2.new(0, 0, 0, 0)
+FloorStealOverlay.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+FloorStealOverlay.BackgroundTransparency = 1
+FloorStealOverlay.BorderSizePixel = 0
+FloorStealOverlay.ZIndex = 2
+FloorStealOverlay.Parent = FloorStealBtn
+
+local FloorStealOverlayCorner = Instance.new("UICorner")
+FloorStealOverlayCorner.CornerRadius = UDim.new(0, 16)
+FloorStealOverlayCorner.Parent = FloorStealOverlay
+
+CreateMainBorderStroke(FloorStealBtn)
+CreateTextGlowStroke(FloorStealText)
+
+local isFloorStealActive = false
+
+local function createElevator()
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local HRP = Character:WaitForChild("HumanoidRootPart")
+
+    local old = workspace:FindFirstChild("BOKA_Elevator")
+    if old then
+        old:Destroy()
+    end
+
+    local Platform = Instance.new("Part")
+    Platform.Name = "BOKA_Elevator"
+    Platform.Size = Vector3.new(5, 0.35, 5)
+    Platform.Anchored = true
+    Platform.CanCollide = true
+    Platform.Material = Enum.Material.Neon
+    Platform.Color = Color3.fromRGB(255, 0, 0)
+    Platform.Parent = workspace
+
+    local startPosition = HRP.Position + Vector3.new(0, -3.05, 0)
+    Platform.Position = startPosition
+
+    task.spawn(function()
+        while Platform and Platform.Parent do
+            local tween = TweenService:Create(
+                Platform,
+                TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {Color = Color3.fromRGB(15, 0, 0)}
+            )
+
+            tween:Play()
+            tween.Completed:Wait()
+
+            if not (Platform and Platform.Parent) then break end
+
+            tween = TweenService:Create(
+                Platform,
+                TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {Color = Color3.fromRGB(255, 0, 0)}
+            )
+
+            tween:Play()
+            tween.Completed:Wait()
+        end
+    end)
+
+    local maxHeight = 9
+
+    local RayParams = RaycastParams.new()
+    RayParams.FilterType = Enum.RaycastFilterType.Exclude
+    RayParams.FilterDescendantsInstances = {
+        Character,
+        Platform
+    }
+
+    local RayResult = workspace:Raycast(
+        startPosition,
+        Vector3.new(0, maxHeight, 0),
+        RayParams
+    )
+
+    local height = maxHeight
+
+    if RayResult then
+        height = math.max(0, RayResult.Distance - 0.5)
+    end
+
+    local targetPosition =
+        startPosition + Vector3.new(0, height, 0)
+
+    local UpTween = TweenService:Create(
+        Platform,
+        TweenInfo.new(
+            3,
+            Enum.EasingStyle.Quint,
+            Enum.EasingDirection.Out
+        ),
+        {
+            Position = targetPosition
+        }
+    )
+
+    UpTween:Play()
+    UpTween.Completed:Wait()
+
+    if Platform and Platform.Parent then
+        Platform.Position = targetPosition
+    end
+end
+
+local function removeElevator()
+    local old = workspace:FindFirstChild("BOKA_Elevator")
+    if old then
+        old:Destroy()
+    end
+end
+
+FloorStealBtn.MouseButton1Click:Connect(function()
+    isFloorStealActive = not isFloorStealActive
+    if isFloorStealActive then
+        FloorStealOverlay.BackgroundTransparency = 0.8
+        task.spawn(createElevator)
+    else
+        FloorStealOverlay.BackgroundTransparency = 1
+        removeElevator()
+    end
+end)
+
 local State = {
     autoBatToggled = false,
     hittingCooldown = false,
