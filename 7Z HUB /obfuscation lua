@@ -6,6 +6,7 @@ local ProximityPromptService = game:GetService("ProximityPromptService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Stats = game:GetService("Stats")
+local Lighting = game:GetService("Lighting")
 
 local LocalPlayer = Players.LocalPlayer
 local LP = LocalPlayer
@@ -22,6 +23,98 @@ end)
 if not ScreenGui.Parent then
     ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 end
+
+
+local BLOOD_MOON_NAME = "BloodMoonSky"
+local COLOR_NAME = "BloodMoonColor"
+local ATMOSPHERE_NAME = "BloodMoonAtmosphere"
+
+local function createBloodMoon()
+    local Sky = Lighting:FindFirstChild(BLOOD_MOON_NAME)
+
+    if not Sky or not Sky:IsA("Sky") then
+        if Sky then
+            Sky:Destroy()
+        end
+
+        Sky = Instance.new("Sky")
+        Sky.Name = BLOOD_MOON_NAME
+        Sky.Parent = Lighting
+    end
+
+    Sky.SkyboxBk = "rbxassetid://159454299"
+    Sky.SkyboxDn = "rbxassetid://159454299"
+    Sky.SkyboxFt = "rbxassetid://159454299"
+    Sky.SkyboxLf = "rbxassetid://159454299"
+    Sky.SkyboxRt = "rbxassetid://159454299"
+    Sky.SkyboxUp = "rbxassetid://159454299"
+
+    Sky.SunAngularSize = 0
+    Sky.MoonAngularSize = 20
+    Sky.MoonTextureId = "rbxasset://sky/moon.jpg"
+
+    Lighting.ClockTime = 0
+    Lighting.Brightness = 3
+    Lighting.ExposureCompensation = 0.7
+    Lighting.Ambient = Color3.fromRGB(170, 70, 70)
+    Lighting.OutdoorAmbient = Color3.fromRGB(150, 60, 60)
+    Lighting.ColorShift_Top = Color3.fromRGB(255, 80, 80)
+    Lighting.ColorShift_Bottom = Color3.fromRGB(120, 50, 50)
+
+    local ColorCorrection = Lighting:FindFirstChild(COLOR_NAME)
+
+    if not ColorCorrection or not ColorCorrection:IsA("ColorCorrectionEffect") then
+        if ColorCorrection then
+            ColorCorrection:Destroy()
+        end
+
+        ColorCorrection = Instance.new("ColorCorrectionEffect")
+        ColorCorrection.Name = COLOR_NAME
+        ColorCorrection.Parent = Lighting
+    end
+
+    ColorCorrection.TintColor = Color3.fromRGB(255, 150, 150)
+    ColorCorrection.Contrast = 0.05
+    ColorCorrection.Saturation = 0
+    ColorCorrection.Brightness = 0.1
+
+    local Atmosphere = Lighting:FindFirstChild(ATMOSPHERE_NAME)
+
+    if not Atmosphere or not Atmosphere:IsA("Atmosphere") then
+        if Atmosphere then
+            Atmosphere:Destroy()
+        end
+
+        Atmosphere = Instance.new("Atmosphere")
+        Atmosphere.Name = ATMOSPHERE_NAME
+        Atmosphere.Parent = Lighting
+    end
+
+    Atmosphere.Density = 0.2
+    Atmosphere.Offset = 0.1
+    Atmosphere.Color = Color3.fromRGB(255, 100, 100)
+    Atmosphere.Decay = Color3.fromRGB(120, 20, 20)
+    Atmosphere.Glare = 0.15
+    Atmosphere.Haze = 0.5
+end
+
+createBloodMoon()
+
+Lighting.ChildAdded:Connect(function()
+    task.wait()
+    createBloodMoon()
+end)
+
+Lighting.ChildRemoved:Connect(function()
+    task.wait()
+    createBloodMoon()
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        createBloodMoon()
+    end
+end)
 
 local lp = Players.LocalPlayer
 
