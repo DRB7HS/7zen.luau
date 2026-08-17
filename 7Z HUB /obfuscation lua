@@ -318,13 +318,47 @@ startAutoSteal()
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 0, 0, 0)
+MainFrame.Size = UDim2.new(0, 320, 0, 220)
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
+
+local Dragging, DragInput, DragStart, StartPos
+
+MainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        Dragging = true
+        DragStart = input.Position
+        StartPos = MainFrame.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                Dragging = false
+            end
+        end)
+    end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        DragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == DragInput and Dragging then
+        local Delta = input.Position - DragStart
+        MainFrame.Position = UDim2.new(
+            StartPos.X.Scale,
+            StartPos.X.Offset + Delta.X,
+            StartPos.Y.Scale,
+            StartPos.Y.Offset + Delta.Y
+        )
+    end
+end)
 
 local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 16)
@@ -1113,38 +1147,63 @@ FloorStealOverlayCorner.Parent = FloorStealOverlay
 CreateMainBorderStroke(FloorStealBtn)
 CreateTextGlowStroke(FloorStealText)
 
-local isFloorStealActive = false
-
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-
-local LocalPlayer = Players.LocalPlayer
-
-local TPDownBtn = Instance.new("ImageButton")
+local TPDownBtn = Instance.new("TextButton")
 TPDownBtn.Name = "TPDownBtn"
-TPDownBtn.Size = UDim2.new(0, 50, 0, 50)
-TPDownBtn.Position = UDim2.new(0.5, -25, 0.8, 0)
-TPDownBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-TPDownBtn.BorderSizePixel = 0
-TPDownBtn.Image = "rbxassetid://136450335437647"
-TPDownBtn.AutoButtonColor = true
+TPDownBtn.Size = UDim2.new(0, 120, 0, 70)
+TPDownBtn.Position = UDim2.new(1, -140, 0.4, -160)
+TPDownBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TPDownBtn.BackgroundTransparency = 1
+TPDownBtn.Text = ""
+TPDownBtn.AutoButtonColor = false
+TPDownBtn.Parent = ScreenGui
 
-local TPStroke = Instance.new("UIStroke")
-TPStroke.Thickness = 2
-TPStroke.Color = Color3.fromRGB(255, 0, 0)
-TPStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-TPStroke.Parent = TPDownBtn
+local TPDownCorner = Instance.new("UICorner")
+TPDownCorner.CornerRadius = UDim.new(0, 16)
+TPDownCorner.Parent = TPDownBtn
 
-local TPTitle = Instance.new("TextLabel")
-TPTitle.Name = "TPTitle"
-TPTitle.Size = UDim2.new(1, 0, 0.3, 0)
-TPTitle.Position = UDim2.new(0, 0, 1, 2)
-TPTitle.BackgroundTransparency = 1
-TPTitle.Text = "TP\nDown"
-TPTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-TPTitle.TextSize = 12
-TPTitle.Font = Enum.Font.SourceSansBold
-TPTitle.Parent = TPDownBtn
+local TPDownImg = Instance.new("ImageLabel")
+TPDownImg.Name = "TPDownImg"
+TPDownImg.Size = UDim2.new(1, 0, 1, 0)
+TPDownImg.Position = UDim2.new(0, 0, 0, 0)
+TPDownImg.BackgroundTransparency = 1
+TPDownImg.Image = "rbxassetid://136450335437647"
+TPDownImg.ScaleType = Enum.ScaleType.Crop
+TPDownImg.Parent = TPDownBtn
+
+local TPDownImgCorner = Instance.new("UICorner")
+TPDownImgCorner.CornerRadius = UDim.new(0, 16)
+TPDownImgCorner.Parent = TPDownImg
+
+local TPDownText = Instance.new("TextLabel")
+TPDownText.Name = "TPDownText"
+TPDownText.Size = UDim2.new(1, 0, 1, 0)
+TPDownText.Position = UDim2.new(0, 0, 0, 0)
+TPDownText.BackgroundTransparency = 1
+TPDownText.Text = "TP\nDown"
+TPDownText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TPDownText.TextSize = 20
+TPDownText.Font = Enum.Font.FredokaOne
+TPDownText.ZIndex = 3
+TPDownText.Parent = TPDownBtn
+
+local TPDownOverlay = Instance.new("Frame")
+TPDownOverlay.Name = "TPDownOverlay"
+TPDownOverlay.Size = UDim2.new(1, 0, 1, 0)
+TPDownOverlay.Position = UDim2.new(0, 0, 0, 0)
+TPDownOverlay.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+TPDownOverlay.BackgroundTransparency = 1
+TPDownOverlay.BorderSizePixel = 0
+TPDownOverlay.ZIndex = 2
+TPDownOverlay.Parent = TPDownBtn
+
+local TPDownOverlayCorner = Instance.new("UICorner")
+TPDownOverlayCorner.CornerRadius = UDim.new(0, 16)
+TPDownOverlayCorner.Parent = TPDownOverlay
+
+CreateMainBorderStroke(TPDownBtn)
+CreateTextGlowStroke(TPDownText)
+
+local isFloorStealActive = false
 
 local function tpDown()
     local character = LocalPlayer.Character
@@ -1157,7 +1216,7 @@ local function tpDown()
     raycastParams.FilterDescendantsInstances = {character}
     raycastParams.FilterType = Enum.RaycastFilterType.Exclude
 
-    local rayResult = Workspace:Raycast(hrp.Position, Vector3.new(0, -500, 0), raycastParams)
+    local rayResult = workspace:Raycast(hrp.Position, Vector3.new(0, -500, 0), raycastParams)
 
     if rayResult then
         hrp.CFrame = CFrame.new(rayResult.Position + Vector3.new(0, 3, 0))
@@ -1979,16 +2038,9 @@ local function ToggleXRayBase(override)
     if xrayBaseEnabled then
         if not xrayConn then
             xrayConn = workspace.DescendantAdded:Connect(function(desc)
-                if xrayBaseEnabled and (desc.Name == "Base" or desc.Name:lower():find("base")) then
+                if desc.Name == "Base" or desc.Name:lower():find("base") then
                     task.wait()
-                    if desc:IsA("BasePart") then
-                        applyXRayToPart(desc)
-                    end
-                    for _, child in ipairs(desc:GetDescendants()) do
-                        if child:IsA("BasePart") then
-                            applyXRayToPart(child)
-                        end
-                    end
+                    applyXRayToPart(desc)
                 end
             end)
         end
@@ -1997,97 +2049,26 @@ local function ToggleXRayBase(override)
             xrayConn:Disconnect()
             xrayConn = nil
         end
-        originalTransparencies = {}
     end
     SaveSettings()
 end
 
 HeplarSwitchBackground1.MouseButton1Click:Connect(function() ToggleXRayBase() end)
 
-local function LoadSettings()
-    if readfile and isfile and isfile("7z_Script_Settings.json") then
-        pcall(function()
-            local raw = readfile("7z_Script_Settings.json")
-            local settingsData = game:GetService("HttpService"):JSONDecode(raw)
-            if settingsData.autoGrab ~= nil then ToggleAutoGrab(settingsData.autoGrab) end
-            if settingsData.antiLag ~= nil then ToggleAntiLag(settingsData.antiLag) end
-            if settingsData.antiKick ~= nil then ToggleAntiKick(settingsData.antiKick) end
-            if settingsData.antiRagdoll ~= nil then ToggleAntiRagdoll(settingsData.antiRagdoll) end
-            if settingsData.infJump ~= nil then ToggleInfiniteJump(settingsData.infJump) end
-            if settingsData.invisible ~= nil then ToggleInvisiblePlayer(settingsData.invisible) end
-            if settingsData.unWalk ~= nil then ToggleUnwalk(settingsData.unWalk) end
-            if settingsData.xrayBase ~= nil then ToggleXRayBase(settingsData.xrayBase) end
-        end)
-    end
-end
-
-LoadSettings()
-
-local TargetWidth = 380
-local TargetHeight = 320
-local MinimizedHeight = 48
-
-MainFrame.Size = UDim2.new(0, 0, 0, 0)
-MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-
-local OpenTweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-local OpenTween = TweenService:Create(MainFrame, OpenTweenInfo, {
-    Size = UDim2.new(0, TargetWidth, 0, TargetHeight),
-    Position = UDim2.new(0.5, 0, 0.5, 0)
-})
-OpenTween:Play()
-
 local isMinimized = false
-
 ToggleButton.MouseButton1Click:Connect(function()
     isMinimized = not isMinimized
-    local TargetSize
-    
     if isMinimized then
         ToggleButton.Text = "+"
         ContentContainer.Visible = false
-        TargetSize = UDim2.new(0, TargetWidth, 0, MinimizedHeight)
+        TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0, 320, 0, 50)}):Play()
     else
         ToggleButton.Text = "-"
-        ContentContainer.Visible = true
-        TargetSize = UDim2.new(0, TargetWidth, 0, TargetHeight)
-    end
-
-    local ToggleTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-    local ToggleTween = TweenService:Create(MainFrame, ToggleTweenInfo, {Size = TargetSize})
-    ToggleTween:Play()
-end)
-
-local dragging = false
-local dragInput, dragStart, startPos
-
-local function update(input)
-    local delta = input.Position - dragStart
-    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-        
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
+        TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0, 320, 0, 220)}):Play()
+        task.delay(0.15, function()
+            if not isMinimized then
+                ContentContainer.Visible = true
             end
         end)
-    end
-end)
-
-MainFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
     end
 end)
