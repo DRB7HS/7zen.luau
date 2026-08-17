@@ -642,7 +642,7 @@ ButtonLabel1.Name = "ButtonLabel1"
 ButtonLabel1.Size = UDim2.new(1, -60, 1, 0)
 ButtonLabel1.Position = UDim2.new(0, 12, 0, 0)
 ButtonLabel1.BackgroundTransparency = 1
-ButtonLabel1.Text = "Auto Grab"
+ButtonLabel1.Text = "Auto Grab all"
 ButtonLabel1.TextColor3 = Color3.fromRGB(255, 255, 255)
 ButtonLabel1.TextSize = 14
 ButtonLabel1.Font = Enum.Font.FredokaOne
@@ -1453,7 +1453,7 @@ local function HandlePrompt(prompt)
     if autoGrabEnabled and prompt:IsA("ProximityPrompt") and prompt.Enabled then
         local actionText = prompt.ActionText:lower()
         local objectText = prompt.ObjectText:lower()
-        if actionText:find("grab") or objectText:find("grab") or actionText:find("purchase") or objectText:find("purchase") or actionText:find("spin") or objectText:find("spin") or actionText == "" then
+        if actionText:find("grab") or objectText:find("grab") or actionText:find("purchase") or objectText:find("purchase") or actionText:find("tack") or objectText:find("tack") or actionText == "" then
             if not activeHolds[prompt] then
                 activeHolds[prompt] = true
                 task.spawn(function()
