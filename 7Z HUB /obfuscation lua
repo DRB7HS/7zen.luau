@@ -473,9 +473,6 @@ BackgroundImage.Image = "rbxassetid://136450335437647"
 BackgroundImage.ScaleType = Enum.ScaleType.Crop
 BackgroundImage.ZIndex = 0
 BackgroundImage.Parent = MainFrame
-local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 12)
-Corner.Parent = BackgroundImage
 
 CreateMainBorderStroke(MainFrame)
 
