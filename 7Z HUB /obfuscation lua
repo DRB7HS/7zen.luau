@@ -463,19 +463,25 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
-local BackgroundImage = Instance.new("ImageLabel")
-BackgroundImage.Name = "BackgroundImage"
-BackgroundImage.Size = UDim2.new(1, 0, 1, 0)
-BackgroundImage.Position = UDim2.new(0, 0, 0, 0)
-BackgroundImage.BackgroundTransparency = 1
-BackgroundImage.BorderSizePixel = 0
-BackgroundImage.Image = "rbxassetid://136450335437647"
-BackgroundImage.ScaleType = Enum.ScaleType.Crop
-BackgroundImage.ZIndex = 0
-BackgroundImage.Parent = MainFrame
-local ImageCorner = Instance.new("UICorner")
-ImageCorner.CornerRadius = UDim.new(0, 12)
-ImageCorner.Parent = BackgroundImage
+if MainFrame then
+    MainFrame.ClipsDescendants = true
+
+    local BackgroundImage = Instance.new("ImageLabel")
+    BackgroundImage.Name = "BackgroundImage"
+    BackgroundImage.Size = UDim2.new(1, 0, 1, 0)
+    BackgroundImage.Position = UDim2.new(0, 0, 0, 0)
+    BackgroundImage.AnchorPoint = Vector2.new(0, 0)
+    BackgroundImage.BackgroundTransparency = 1
+    BackgroundImage.BorderSizePixel = 0
+    BackgroundImage.Image = "rbxassetid://136450335437647"
+    BackgroundImage.ScaleType = Enum.ScaleType.Crop
+    BackgroundImage.ZIndex = 0
+    BackgroundImage.Parent = MainFrame
+
+    local ImageCorner = Instance.new("UICorner")
+    ImageCorner.CornerRadius = UDim.new(0, 12)
+    ImageCorner.Parent = BackgroundImage
+end
 
 CreateMainBorderStroke(MainFrame)
 
