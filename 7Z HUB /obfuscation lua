@@ -224,7 +224,6 @@ local function setupUI()
         container.BackgroundTransparency = 1
         container.ZIndex = 10
         container.Parent = sg
-        Instance.new("UICorner", container).CornerRadius = UDim.new(0, 12)
 
         bannerFrame = Instance.new("Frame")
         bannerFrame.Size = UDim2.new(1, 0, 0, 30)
@@ -234,7 +233,6 @@ local function setupUI()
         bannerFrame.BorderSizePixel = 0
         bannerFrame.ZIndex = 10
         bannerFrame.Parent = container
-        Instance.new("UICorner", bannerFrame).CornerRadius = UDim.new(0, 12)
         CreateMainBorderStroke(bannerFrame)
 
         local iconImage = Instance.new("ImageLabel")
@@ -245,9 +243,6 @@ local function setupUI()
         iconImage.Image = "rbxassetid://136450335437647"
         iconImage.ZIndex = 12
         iconImage.Parent = bannerFrame
-
-        local iconCorner = Instance.new("UICorner", iconImage)
-        iconCorner.CornerRadius = UDim.new(1, 0)
         CreateMainBorderStroke(iconImage)
 
         infoLabel = Instance.new("TextLabel")
@@ -271,7 +266,6 @@ local function setupUI()
         progressBarBg.Visible = true
         progressBarBg.ZIndex = 10
         progressBarBg.Parent = container
-        Instance.new("UICorner", progressBarBg).CornerRadius = UDim.new(0, 12)
         CreateMainBorderStroke(progressBarBg)
 
         progressFill = Instance.new("Frame")
@@ -279,7 +273,6 @@ local function setupUI()
         progressFill.BackgroundColor3 = THEME_COLOR
         progressFill.ZIndex = 11
         progressFill.Parent = progressBarBg
-        Instance.new("UICorner", progressFill).CornerRadius = UDim.new(0, 12)
         CreateMainBorderStroke(progressFill)
 
         percentLabel = Instance.new("TextLabel")
@@ -323,26 +316,28 @@ local function findNearestPrompt()
     if not plots then return nil end
     local nearest, dist = nil, math.huge
     for _, plot in ipairs(plots:GetChildren()) do
-        if isMyPlotByName(plot.Name) then continue end
-        local pods = plot:FindFirstChild("AnimalPodiums")
-        if not pods then continue end
-        for _, pod in ipairs(pods:GetChildren()) do
-            local base = pod:FindFirstChild("Base")
-            if not base then continue end
-            local spawn = base:FindFirstChild("Spawn")
-            if not spawn then continue end
-            local d = (spawn.Position - hrp.Position).Magnitude
-            if d <= STEAL_RADIUS and d < dist then
-                local att = spawn:FindFirstChild("PromptAttachment")
-                if att then
-                    for _, p in ipairs(att:GetChildren()) do
-                        if p:IsA("ProximityPrompt") and p.ActionText and p.ActionText:find("Steal") then
-                            nearest, dist = p, d
+        pcall(function()
+            if isMyPlotByName(plot.Name) then return end
+            local pods = plot:FindFirstChild("AnimalPodiums")
+            if not pods then return end
+            for _, pod in ipairs(pods:GetChildren()) do
+                local base = pod:FindFirstChild("Base")
+                if not base then continue end
+                local spawn = base:FindFirstChild("Spawn")
+                if not spawn then continue end
+                local d = (spawn.Position - hrp.Position).Magnitude
+                if d <= STEAL_RADIUS and d < dist then
+                    local att = spawn:FindFirstChild("PromptAttachment")
+                    if att then
+                        for _, p in ipairs(att:GetChildren()) do
+                            if p:IsA("ProximityPrompt") and p.ActionText and p.ActionText:lower():find("steal") then
+                                nearest, dist = p, d
+                            end
                         end
                     end
                 end
             end
-        end
+        end)
     end
     return nearest
 end
@@ -361,16 +356,18 @@ local function executeSteal(prompt)
     if not StealData[prompt] then
         StealData[prompt] = {hold = {}, trigger = {}, ready = true}
         if getconnections then
-            for _, c in ipairs(getconnections(prompt.PromptButtonHoldBegan)) do
-                if c.Function then table.insert(StealData[prompt].hold, c.Function) end
-            end
-            for _, c in ipairs(getconnections(prompt.Triggered)) do
-                if c.Function then table.insert(StealData[prompt].trigger, c.Function) end
-            end
+            pcall(function()
+                for _, c in ipairs(getconnections(prompt.PromptButtonHoldBegan)) do
+                    if c.Function then table.insert(StealData[prompt].hold, c.Function) end
+                end
+                for _, c in ipairs(getconnections(prompt.Triggered)) do
+                    if c.Function then table.insert(StealData[prompt].trigger, c.Function) end
+                end
+            end)
         end
     end
     local data = StealData[prompt]
-    if not data.ready then return end
+    if not data or not data.ready then return end
     data.ready = false
     isStealing = true
     local startTime = tick()
@@ -454,10 +451,6 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 16)
-UICorner.Parent = MainFrame
-
 local BackgroundImage = Instance.new("ImageLabel")
 BackgroundImage.Name = "BackgroundImage"
 BackgroundImage.Size = UDim2.new(1, 0, 1, 0)
@@ -466,10 +459,6 @@ BackgroundImage.BackgroundTransparency = 1
 BackgroundImage.Image = "rbxassetid://136450335437647"
 BackgroundImage.ScaleType = Enum.ScaleType.Crop
 BackgroundImage.Parent = MainFrame
-
-local ImageCorner = Instance.new("UICorner")
-ImageCorner.CornerRadius = UDim.new(0, 16)
-ImageCorner.Parent = BackgroundImage
 
 CreateMainBorderStroke(MainFrame)
 
@@ -499,10 +488,6 @@ ToggleButton.TextSize = 18
 ToggleButton.Font = Enum.Font.FredokaOne
 ToggleButton.AutoButtonColor = true
 ToggleButton.Parent = MainFrame
-
-local BtnCorner = Instance.new("UICorner")
-BtnCorner.CornerRadius = UDim.new(0, 6)
-BtnCorner.Parent = ToggleButton
 
 CreateTextGlowStroke(ToggleButton)
 
@@ -672,10 +657,6 @@ ButtonFrame0.Parent = AntiMenuList
 
 CreateMainBorderStroke(ButtonFrame0)
 
-local ButtonCorner0 = Instance.new("UICorner")
-ButtonCorner0.CornerRadius = UDim.new(0, 16)
-ButtonCorner0.Parent = ButtonFrame0
-
 local ButtonLabel0 = Instance.new("TextLabel")
 ButtonLabel0.Name = "ButtonLabel0"
 ButtonLabel0.Size = UDim2.new(1, -60, 1, 0)
@@ -700,10 +681,6 @@ SwitchBackground0.Text = ""
 SwitchBackground0.AutoButtonColor = false
 SwitchBackground0.Parent = ButtonFrame0
 
-local SwitchCorner0 = Instance.new("UICorner")
-SwitchCorner0.CornerRadius = UDim.new(0, 16)
-SwitchCorner0.Parent = SwitchBackground0
-
 local SwitchCircle0 = Instance.new("Frame")
 SwitchCircle0.Name = "SwitchCircle0"
 SwitchCircle0.Size = UDim2.new(0, 16, 0, 16)
@@ -726,10 +703,6 @@ ButtonFrame1.BorderSizePixel = 0
 ButtonFrame1.Parent = AutoMenuList
 
 CreateMainBorderStroke(ButtonFrame1)
-
-local ButtonCorner1 = Instance.new("UICorner")
-ButtonCorner1.CornerRadius = UDim.new(0, 16)
-ButtonCorner1.Parent = ButtonFrame1
 
 local ButtonLabel1 = Instance.new("TextLabel")
 ButtonLabel1.Name = "ButtonLabel1"
@@ -755,10 +728,6 @@ SwitchBackground1.Text = ""
 SwitchBackground1.AutoButtonColor = false
 SwitchBackground1.Parent = ButtonFrame1
 
-local SwitchCorner1 = Instance.new("UICorner")
-SwitchCorner1.CornerRadius = UDim.new(0, 16)
-SwitchCorner1.Parent = SwitchBackground1
-
 local SwitchCircle1 = Instance.new("Frame")
 SwitchCircle1.Name = "SwitchCircle1"
 SwitchCircle1.Size = UDim2.new(0, 16, 0, 16)
@@ -781,10 +750,6 @@ ButtonFrame2.BorderSizePixel = 0
 ButtonFrame2.Parent = AntiMenuList
 
 CreateMainBorderStroke(ButtonFrame2)
-
-local ButtonCorner2 = Instance.new("UICorner")
-ButtonCorner2.CornerRadius = UDim.new(0, 16)
-ButtonCorner2.Parent = ButtonFrame2
 
 local ButtonLabel2 = Instance.new("TextLabel")
 ButtonLabel2.Name = "ButtonLabel2"
@@ -810,10 +775,6 @@ SwitchBackground2.Text = ""
 SwitchBackground2.AutoButtonColor = false
 SwitchBackground2.Parent = ButtonFrame2
 
-local SwitchCorner2 = Instance.new("UICorner")
-SwitchCorner2.CornerRadius = UDim.new(0, 16)
-SwitchCorner2.Parent = SwitchBackground2
-
 local SwitchCircle2 = Instance.new("Frame")
 SwitchCircle2.Name = "SwitchCircle2"
 SwitchCircle2.Size = UDim2.new(0, 16, 0, 16)
@@ -836,10 +797,6 @@ ButtonFrame3.BorderSizePixel = 0
 ButtonFrame3.Parent = AntiMenuList
 
 CreateMainBorderStroke(ButtonFrame3)
-
-local ButtonCorner3 = Instance.new("UICorner")
-ButtonCorner3.CornerRadius = UDim.new(0, 16)
-ButtonCorner3.Parent = ButtonFrame3
 
 local ButtonLabel3 = Instance.new("TextLabel")
 ButtonLabel3.Name = "ButtonLabel3"
@@ -865,10 +822,6 @@ SwitchBackground3.Text = ""
 SwitchBackground3.AutoButtonColor = false
 SwitchBackground3.Parent = ButtonFrame3
 
-local SwitchCorner3 = Instance.new("UICorner")
-SwitchCorner3.CornerRadius = UDim.new(0, 16)
-SwitchCorner3.Parent = SwitchBackground3
-
 local SwitchCircle3 = Instance.new("Frame")
 SwitchCircle3.Name = "SwitchCircle3"
 SwitchCircle3.Size = UDim2.new(0, 16, 0, 16)
@@ -891,10 +844,6 @@ PlayerButtonFrame1.BorderSizePixel = 0
 PlayerButtonFrame1.Parent = PlayerMenuList
 
 CreateMainBorderStroke(PlayerButtonFrame1)
-
-local PlayerButtonCorner1 = Instance.new("UICorner")
-PlayerButtonCorner1.CornerRadius = UDim.new(0, 16)
-PlayerButtonCorner1.Parent = PlayerButtonFrame1
 
 local PlayerButtonLabel1 = Instance.new("TextLabel")
 PlayerButtonLabel1.Name = "PlayerButtonLabel1"
@@ -920,10 +869,6 @@ PlayerSwitchBackground1.Text = ""
 PlayerSwitchBackground1.AutoButtonColor = false
 PlayerSwitchBackground1.Parent = PlayerButtonFrame1
 
-local PlayerSwitchCorner1 = Instance.new("UICorner")
-PlayerSwitchCorner1.CornerRadius = UDim.new(0, 16)
-PlayerSwitchCorner1.Parent = PlayerSwitchBackground1
-
 local PlayerSwitchCircle1 = Instance.new("Frame")
 PlayerSwitchCircle1.Name = "PlayerSwitchCircle1"
 PlayerSwitchCircle1.Size = UDim2.new(0, 16, 0, 16)
@@ -946,10 +891,6 @@ PlayerButtonFrame2.BorderSizePixel = 0
 PlayerButtonFrame2.Parent = PlayerMenuList
 
 CreateMainBorderStroke(PlayerButtonFrame2)
-
-local PlayerButtonCorner2 = Instance.new("UICorner")
-PlayerButtonCorner2.CornerRadius = UDim.new(0, 16)
-PlayerButtonCorner2.Parent = PlayerButtonFrame2
 
 local PlayerButtonLabel2 = Instance.new("TextLabel")
 PlayerButtonLabel2.Name = "PlayerButtonLabel2"
@@ -975,10 +916,6 @@ PlayerSwitchBackground2.Text = ""
 PlayerSwitchBackground2.AutoButtonColor = false
 PlayerSwitchBackground2.Parent = PlayerButtonFrame2
 
-local PlayerSwitchCorner2 = Instance.new("UICorner")
-PlayerSwitchCorner2.CornerRadius = UDim.new(0, 16)
-PlayerSwitchCorner2.Parent = PlayerSwitchBackground2
-
 local PlayerSwitchCircle2 = Instance.new("Frame")
 PlayerSwitchCircle2.Name = "PlayerSwitchCircle2"
 PlayerSwitchCircle2.Size = UDim2.new(0, 16, 0, 16)
@@ -1001,10 +938,6 @@ PlayerButtonFrame3.BorderSizePixel = 0
 PlayerButtonFrame3.Parent = PlayerMenuList
 
 CreateMainBorderStroke(PlayerButtonFrame3)
-
-local PlayerButtonCorner3 = Instance.new("UICorner")
-PlayerButtonCorner3.CornerRadius = UDim.new(0, 16)
-PlayerButtonCorner3.Parent = PlayerButtonFrame3
 
 local PlayerButtonLabel3 = Instance.new("TextLabel")
 PlayerButtonLabel3.Name = "PlayerButtonLabel3"
@@ -1030,10 +963,6 @@ PlayerSwitchBackground3.Text = ""
 PlayerSwitchBackground3.AutoButtonColor = false
 PlayerSwitchBackground3.Parent = PlayerButtonFrame3
 
-local PlayerSwitchCorner3 = Instance.new("UICorner")
-PlayerSwitchCorner3.CornerRadius = UDim.new(0, 16)
-PlayerSwitchCorner3.Parent = PlayerSwitchBackground3
-
 local PlayerSwitchCircle3 = Instance.new("Frame")
 PlayerSwitchCircle3.Name = "PlayerSwitchCircle3"
 PlayerSwitchCircle3.Size = UDim2.new(0, 16, 0, 16)
@@ -1056,10 +985,6 @@ HeplarButtonFrame1.BorderSizePixel = 0
 HeplarButtonFrame1.Parent = HeplarMenuList
 
 CreateMainBorderStroke(HeplarButtonFrame1)
-
-local HeplarButtonCorner1 = Instance.new("UICorner")
-HeplarButtonCorner1.CornerRadius = UDim.new(0, 16)
-HeplarButtonCorner1.Parent = HeplarButtonFrame1
 
 local HeplarButtonLabel1 = Instance.new("TextLabel")
 HeplarButtonLabel1.Name = "HeplarButtonLabel1"
@@ -1084,10 +1009,6 @@ HeplarSwitchBackground1.BorderSizePixel = 0
 HeplarSwitchBackground1.Text = ""
 HeplarSwitchBackground1.AutoButtonColor = false
 HeplarSwitchBackground1.Parent = HeplarButtonFrame1
-
-local HeplarSwitchCorner1 = Instance.new("UICorner")
-HeplarSwitchCorner1.CornerRadius = UDim.new(0, 16)
-HeplarSwitchCorner1.Parent = HeplarSwitchBackground1
 
 local HeplarSwitchCircle1 = Instance.new("Frame")
 HeplarSwitchCircle1.Name = "HeplarSwitchCircle1"
@@ -1139,10 +1060,6 @@ AutoBatBtn.Text = ""
 AutoBatBtn.AutoButtonColor = false
 AutoBatBtn.Parent = ScreenGui
 
-local AutoBatCorner = Instance.new("UICorner")
-AutoBatCorner.CornerRadius = UDim.new(0, 16)
-AutoBatCorner.Parent = AutoBatBtn
-
 local AutoBatImg = Instance.new("ImageLabel")
 AutoBatImg.Name = "AutoBatImg"
 AutoBatImg.Size = UDim2.new(1, 0, 1, 0)
@@ -1151,10 +1068,6 @@ AutoBatImg.BackgroundTransparency = 1
 AutoBatImg.Image = "rbxassetid://136450335437647"
 AutoBatImg.ScaleType = Enum.ScaleType.Crop
 AutoBatImg.Parent = AutoBatBtn
-
-local AutoBatImgCorner = Instance.new("UICorner")
-AutoBatImgCorner.CornerRadius = UDim.new(0, 16)
-AutoBatImgCorner.Parent = AutoBatImg
 
 local AutoBatText = Instance.new("TextLabel")
 AutoBatText.Name = "AutoBatText"
@@ -1178,10 +1091,6 @@ AutoBatOverlay.BorderSizePixel = 0
 AutoBatOverlay.ZIndex = 2
 AutoBatOverlay.Parent = AutoBatBtn
 
-local AutoBatOverlayCorner = Instance.new("UICorner")
-AutoBatOverlayCorner.CornerRadius = UDim.new(0, 16)
-AutoBatOverlayCorner.Parent = AutoBatOverlay
-
 CreateMainBorderStroke(AutoBatBtn)
 CreateTextGlowStroke(AutoBatText)
 
@@ -1195,10 +1104,6 @@ FloorStealBtn.Text = ""
 FloorStealBtn.AutoButtonColor = false
 FloorStealBtn.Parent = ScreenGui
 
-local FloorStealCorner = Instance.new("UICorner")
-FloorStealCorner.CornerRadius = UDim.new(0, 16)
-FloorStealCorner.Parent = FloorStealBtn
-
 local FloorStealImg = Instance.new("ImageLabel")
 FloorStealImg.Name = "FloorStealImg"
 FloorStealImg.Size = UDim2.new(1, 0, 1, 0)
@@ -1207,10 +1112,6 @@ FloorStealImg.BackgroundTransparency = 1
 FloorStealImg.Image = "rbxassetid://136450335437647"
 FloorStealImg.ScaleType = Enum.ScaleType.Crop
 FloorStealImg.Parent = FloorStealBtn
-
-local FloorStealImgCorner = Instance.new("UICorner")
-FloorStealImgCorner.CornerRadius = UDim.new(0, 16)
-FloorStealImgCorner.Parent = FloorStealImg
 
 local FloorStealText = Instance.new("TextLabel")
 FloorStealText.Name = "FloorStealText"
@@ -1234,10 +1135,6 @@ FloorStealOverlay.BorderSizePixel = 0
 FloorStealOverlay.ZIndex = 2
 FloorStealOverlay.Parent = FloorStealBtn
 
-local FloorStealOverlayCorner = Instance.new("UICorner")
-FloorStealOverlayCorner.CornerRadius = UDim.new(0, 16)
-FloorStealOverlayCorner.Parent = FloorStealOverlay
-
 CreateMainBorderStroke(FloorStealBtn)
 CreateTextGlowStroke(FloorStealText)
 
@@ -1251,10 +1148,6 @@ TPDownBtn.Text = ""
 TPDownBtn.AutoButtonColor = false
 TPDownBtn.Parent = ScreenGui
 
-local TPDownCorner = Instance.new("UICorner")
-TPDownCorner.CornerRadius = UDim.new(0, 16)
-TPDownCorner.Parent = TPDownBtn
-
 local TPDownImg = Instance.new("ImageLabel")
 TPDownImg.Name = "TPDownImg"
 TPDownImg.Size = UDim2.new(1, 0, 1, 0)
@@ -1263,10 +1156,6 @@ TPDownImg.BackgroundTransparency = 1
 TPDownImg.Image = "rbxassetid://136450335437647"
 TPDownImg.ScaleType = Enum.ScaleType.Crop
 TPDownImg.Parent = TPDownBtn
-
-local TPDownImgCorner = Instance.new("UICorner")
-TPDownImgCorner.CornerRadius = UDim.new(0, 16)
-TPDownImgCorner.Parent = TPDownImg
 
 local TPDownText = Instance.new("TextLabel")
 TPDownText.Name = "TPDownText"
@@ -1289,10 +1178,6 @@ TPDownOverlay.BackgroundTransparency = 1
 TPDownOverlay.BorderSizePixel = 0
 TPDownOverlay.ZIndex = 2
 TPDownOverlay.Parent = TPDownBtn
-
-local TPDownOverlayCorner = Instance.new("UICorner")
-TPDownOverlayCorner.CornerRadius = UDim.new(0, 16)
-TPDownOverlayCorner.Parent = TPDownOverlay
 
 CreateMainBorderStroke(TPDownBtn)
 CreateTextGlowStroke(TPDownText)
@@ -1495,12 +1380,14 @@ if LP.Character then task.spawn(function() setupChar(LP.Character) end) end
 
 RunService.Heartbeat:Connect(function()
     if not (State.autoBatToggled and h and hrp) then return end
-    local target = getClosestPlayer()
+    local target, dist = getClosestPlayer()
     if target and target.Character then
         local tr = target.Character:FindFirstChild("HumanoidRootPart")
         if tr then
             if sethiddenproperty then
-                sethiddenproperty(hrp, "PhysicsRepRootPart", tr)
+                pcall(function()
+                    sethiddenproperty(hrp, "PhysicsRepRootPart", tr)
+                end)
             end
             local targetPos = tr.Position + Vector3.new(0, 0.9, 0)
             if (hrp.Position - targetPos).Magnitude > 8 then
@@ -2164,7 +2051,7 @@ local function ToggleXRayBase(override)
     end)
 end
 
-HeplarSwitchBackground1.MouseButton1Click:Connect(function() ToggleXRayBase() end)
+HeplarSwitchBackground1.MouseButton1Click:Connect(function(error) ToggleXRayBase() end)
 
 local isMinimized = false
 ToggleButton.MouseButton1Click:Connect(function()
