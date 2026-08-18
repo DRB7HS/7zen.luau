@@ -474,6 +474,10 @@ BackgroundImage.ScaleType = Enum.ScaleType.Crop
 BackgroundImage.ZIndex = 0
 BackgroundImage.Parent = MainFrame
 
+local mc = Instance.new("UICorner")
+mc.CornerRadius = UDim.new(0, 12)
+mc.Parent = BackgroundImage
+
 CreateMainBorderStroke(MainFrame)
 
 local TitleLabel = Instance.new("TextLabel")
