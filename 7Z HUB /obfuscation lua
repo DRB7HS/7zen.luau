@@ -246,6 +246,10 @@ local function setupUI()
         iconImage.Image = "rbxassetid://136450335437647"
         iconImage.ZIndex = 12
         iconImage.Parent = bannerFrame
+
+        local iconCorner = Instance.new("UICorner")
+        iconCorner.CornerRadius = UDim.new(1, 0)
+        iconCorner.Parent = iconImage
         CreateMainBorderStroke(iconImage)
 
         infoLabel = Instance.new("TextLabel")
