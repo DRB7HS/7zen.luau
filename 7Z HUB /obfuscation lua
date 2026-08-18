@@ -474,9 +474,9 @@ BackgroundImage.ScaleType = Enum.ScaleType.Crop
 BackgroundImage.ZIndex = 0
 BackgroundImage.Parent = MainFrame
 
-local mc = Instance.new("UICorner")
-mc.CornerRadius = UDim.new(0, 12)
-mc.Parent = BackgroundImage
+local ImageCorner = Instance.new("UICorner")
+ImageCorner.CornerRadius = UDim.new(0, 12)
+ImageCorner.Parent = BackgroundImage
 
 CreateMainBorderStroke(MainFrame)
 
