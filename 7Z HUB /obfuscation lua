@@ -472,6 +472,10 @@ BackgroundImage.Image = "rbxassetid://136450335437647"
 BackgroundImage.ScaleType = Enum.ScaleType.Crop
 BackgroundImage.Parent = MainFrame
 
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 18)
+Corner.Parent = BackgroundImage
+
 CreateMainBorderStroke(MainFrame)
 
 local TitleLabel = Instance.new("TextLabel")
