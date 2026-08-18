@@ -425,6 +425,7 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
+
 local mc = Instance.new("UICorner")
 mc.CornerRadius = UDim.new(0, 12)
 mc.Parent = MainFrame
