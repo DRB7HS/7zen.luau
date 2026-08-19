@@ -1,0 +1,78 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local function createSpeedGui(character)
+	if not character then return end
+	local head = character:FindFirstChild("Head")
+	if not head then return end
+
+	if head:FindFirstChild("by7zen_SpeedTag") then return end
+
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = "by7zen_SpeedTag"
+	billboard.Adornee = head
+	billboard.Size = UDim2.new(0, 200, 0, 50)
+	billboard.StudsOffset = Vector3.new(0, 2.7, 0)
+	billboard.AlwaysOnTop = true
+	billboard.MaxDistance = math.huge
+	billboard.Parent = head
+
+	local textLabel = Instance.new("TextLabel")
+	textLabel.Name = "SpeedLabel"
+	textLabel.Size = UDim2.new(1, 0, 1, 0)
+	textLabel.BackgroundTransparency = 1
+	textLabel.Text = "Speed 0.0"
+	textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	textLabel.TextSize = 24
+	textLabel.Font = Enum.Font.GothamBlack
+	textLabel.TextStrokeTransparency = 0
+	textLabel.TextStrokeColor3 = Color3.fromRGB(139, 0, 0)
+	textLabel.Parent = billboard
+
+	local uigradient = Instance.new("UIGradient")
+	uigradient.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(139, 0, 0)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+	})
+	uigradient.Parent = textLabel
+
+	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+	local lastPosition = humanoidRootPart and humanoidRootPart.Position or Vector3.new(0, 0, 0)
+
+	local connection
+	connection = RunService.RenderStepped:Connect(function(dt)
+		if not character or not character.Parent or not humanoidRootPart or not humanoidRootPart.Parent then
+			if connection then
+				connection:Disconnect()
+			end
+			return
+		end
+
+		local currentPosition = humanoidRootPart.Position
+		local distance = (Vector3.new(currentPosition.X, 0, currentPosition.Z) - Vector3.new(lastPosition.X, 0, lastPosition.Z)).Magnitude
+		local speed = dt > 0 and (distance / dt) or 0
+		lastPosition = currentPosition
+
+		textLabel.Text = string.format("Speed %.1f", speed)
+	end)
+end
+
+local function onPlayerAdded(player)
+	player.CharacterAdded:Connect(function(character)
+		task.wait(1)
+		createSpeedGui(character)
+	end)
+	if player.Character then
+		task.spawn(function()
+			task.wait(1)
+			createSpeedGui(player.Character)
+		end)
+	end
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+	onPlayerAdded(player)
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
